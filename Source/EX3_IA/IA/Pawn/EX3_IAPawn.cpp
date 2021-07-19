@@ -2,8 +2,8 @@
 
 
 #include "EX3_IAPawn.h"
-#include "EX3_IA/IA/Components/EX3_FSM.h"
-#include "EX3_IA/IA/Components/EX3_DetectionSystem.h"
+
+#include "EX3_IA/IA/Components/EX3_Brain.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
@@ -14,6 +14,7 @@ AEX3_IAPawn::AEX3_IAPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	CreateBrain();
 	CreateComponents();
 }
 
@@ -38,17 +39,18 @@ void AEX3_IAPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
+void AEX3_IAPawn::CreateBrain()
+{
+	m_Brain = CreateDefaultSubobject<UEX3_Brain>(TEXT("Brain"));
+	AddOwnedComponent(m_Brain);
+}
+
 void AEX3_IAPawn::CreateComponents()
 {
 	//Create Capsule Root
 	m_CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	CreateComponentsRelativeToCapsule();
-	//Create FSM
-	m_FSM = CreateDefaultSubobject<UEX3_FSM>(TEXT("FSM"));
-	AddOwnedComponent(m_FSM);
-	//Create Detection System
-	m_DetectionSystem = CreateDefaultSubobject<UEX3_DetectionSystem>(TEXT("DetectionSystem"));
-	AddOwnedComponent(m_DetectionSystem);
+	///
 	//Create PawnMovement
 	m_PawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("PawnMovement"));
 	AddOwnedComponent(m_PawnMovement);

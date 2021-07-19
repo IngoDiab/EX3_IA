@@ -7,14 +7,15 @@
 #include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+
 // Sets default values for this component's properties
 UEX3_DetectionSystem::UEX3_DetectionSystem()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	InitEvents();
 }
 
 
@@ -30,7 +31,21 @@ void UEX3_DetectionSystem::BeginPlay()
 void UEX3_DetectionSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	VisionDetection();
+	UpdateVisualDetection();
+}
+
+void UEX3_DetectionSystem::InitEvents()
+{
+	onPlayerSpotted.AddLambda([this]()
+	{
+		m_IsPlayerSpotted = true;
+		//UAIBlueprintHelperLibrary::SimpleMoveToLocation(m_Owner->GetController(), FVector(0,0,m_Owner->GetActorLocation().Z));
+	});
+
+	onPlayerLost.AddLambda([this]()
+	{
+		m_IsPlayerSpotted = false;
+	});
 }
 
 void UEX3_DetectionSystem::InitComponent()
@@ -42,19 +57,14 @@ void UEX3_DetectionSystem::InitComponent()
 	m_OwnerEyesLocation = m_Owner->GetEyesLocation();
 }
 
-bool UEX3_DetectionSystem::VisionLineTrace(const float _angle)
+void UEX3_DetectionSystem::UpdateVisualDetection()
 {
-	if (!m_OwnerEyesLocation) return false;
-	FHitResult _hit;
-	const FVector _start = m_OwnerEyesLocation->GetComponentLocation();
-	const FVector _rotatedForward = m_OwnerEyesLocation->GetForwardVector().RotateAngleAxis(_angle, m_OwnerEyesLocation->GetUpVector());
-	const FVector _end = _start+ _rotatedForward * m_DistanceVision;
-	const bool _hasHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), _start, _end, ETraceTypeQuery::TraceTypeQuery3, true, m_ActorToIgnore, EDrawDebugTrace::ForOneFrame, _hit, true);
-	if (!_hasHit) return false;
-	return Cast<ACharacter>(_hit.Actor) != nullptr;
+	const bool _seeEnnemy = VisionDetection();
+	if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpotted.Broadcast();
+	else if (!_seeEnnemy && m_IsPlayerSpotted) onPlayerLost.Broadcast();
 }
 
-void UEX3_DetectionSystem::VisionDetection()
+bool UEX3_DetectionSystem::VisionDetection()
 {
 	const float _angleLeft = -m_AngleVision / 2;
 	const float _angleRight = m_AngleVision / 2;
@@ -64,10 +74,18 @@ void UEX3_DetectionSystem::VisionDetection()
 		_hit |= VisionLineTrace(i);
 		//if (_hit)break;
 	}
-	if (_hit)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("See"));
-	}
-	else UE_LOG(LogTemp, Warning, TEXT("Lost"));
+	return _hit;
+}
+
+bool UEX3_DetectionSystem::VisionLineTrace(const float _angle)
+{
+	if (!m_OwnerEyesLocation) return false;
+	FHitResult _hit;
+	const FVector _start = m_OwnerEyesLocation->GetComponentLocation();
+	const FVector _rotatedForward = m_OwnerEyesLocation->GetForwardVector().RotateAngleAxis(_angle, m_OwnerEyesLocation->GetUpVector());
+	const FVector _end = _start + _rotatedForward * m_DistanceVision;
+	const bool _hasHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), _start, _end, ETraceTypeQuery::TraceTypeQuery3, true, m_ActorToIgnore, EDrawDebugTrace::ForOneFrame, _hit, true);
+	if (!_hasHit) return false;
+	return Cast<ACharacter>(_hit.Actor) != nullptr;
 }
 

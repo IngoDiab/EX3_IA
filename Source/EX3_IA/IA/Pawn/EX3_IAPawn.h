@@ -6,8 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "EX3_IAPawn.generated.h"
 
-class UEX3_FSM;
-class UEX3_DetectionSystem;
+class UEX3_Brain;
 
 class UCapsuleComponent;
 class UArrowComponent;
@@ -18,9 +17,7 @@ class EX3_IA_API AEX3_IAPawn : public APawn
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere) UEX3_FSM* m_FSM = nullptr;
-	UPROPERTY(EditAnywhere) UEX3_DetectionSystem* m_DetectionSystem = nullptr;
-
+	UPROPERTY(EditAnywhere) UEX3_Brain* m_Brain = nullptr;
 	UPROPERTY(EditAnywhere) USceneComponent* m_EyesLocation = nullptr;
 
 	UPROPERTY(EditAnywhere) UCapsuleComponent* m_CapsuleComponent = nullptr;
@@ -47,6 +44,7 @@ public:
 	FORCEINLINE USceneComponent* GetEyesLocation() const { return m_EyesLocation; };
 
 public:
+	void CreateBrain();
 	void CreateComponents();
 	void CreateComponentsRelativeToCapsule();
 	void CreateComponentsRelativeToMesh();
