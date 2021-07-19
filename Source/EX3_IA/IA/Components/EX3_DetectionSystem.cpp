@@ -39,12 +39,13 @@ void UEX3_DetectionSystem::InitEvents()
 	onPlayerSpotted.AddLambda([this]()
 	{
 		m_IsPlayerSpotted = true;
-		//UAIBlueprintHelperLibrary::SimpleMoveToLocation(m_Owner->GetController(), FVector(0,0,m_Owner->GetActorLocation().Z));
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(m_Owner->GetController(), FVector(0,0,m_Owner->GetActorLocation().Z));
 	});
 
 	onPlayerLost.AddLambda([this]()
 	{
 		m_IsPlayerSpotted = false;
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(m_Owner->GetController(), FVector(1000, 0, m_Owner->GetActorLocation().Z));
 	});
 }
 

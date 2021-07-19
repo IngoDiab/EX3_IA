@@ -48,4 +48,6 @@ public:
 	void CreateComponents();
 	void CreateComponentsRelativeToCapsule();
 	void CreateComponentsRelativeToMesh();
+
+	void Gravity();
 };

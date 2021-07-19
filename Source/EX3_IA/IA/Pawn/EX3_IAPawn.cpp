@@ -29,7 +29,7 @@ void AEX3_IAPawn::BeginPlay()
 void AEX3_IAPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	Gravity();
 }
 
 // Called to bind functionality to input
@@ -75,5 +75,13 @@ void AEX3_IAPawn::CreateComponentsRelativeToMesh()
 	//Create EyesLocation
 	m_EyesLocation = CreateDefaultSubobject<USceneComponent>(TEXT("EyesLocation"));
 	m_EyesLocation->AttachToComponent(m_Mesh, FAttachmentTransformRules::KeepRelativeTransform);
+}
+
+void AEX3_IAPawn::Gravity()
+{
+	if (!m_PawnMovement)return;
+	const FVector _currentVelocity = m_PawnMovement->Velocity;
+	const FVector _newVelocity = FVector(_currentVelocity.X, _currentVelocity.Y, _currentVelocity.Z - 98.1f);
+	m_PawnMovement->Velocity = _newVelocity;
 }
 
