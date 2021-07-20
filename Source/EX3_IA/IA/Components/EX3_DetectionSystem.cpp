@@ -3,11 +3,12 @@
 
 #include "EX3_DetectionSystem.h"
 #include "EX3_IA/IA/Pawn/EX3_IAPawn.h"
+#include "EX3_Brain.h"
+
+#include "EX3_MovementSystem.h"
 
 #include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
-
-#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 // Sets default values for this component's properties
 UEX3_DetectionSystem::UEX3_DetectionSystem()
@@ -15,9 +16,13 @@ UEX3_DetectionSystem::UEX3_DetectionSystem()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	InitEvents();
 }
 
+
+void UEX3_DetectionSystem::PostInitProperties()
+{
+	Super::PostInitProperties();
+}
 
 // Called when the game starts
 void UEX3_DetectionSystem::BeginPlay()
@@ -31,7 +36,6 @@ void UEX3_DetectionSystem::BeginPlay()
 void UEX3_DetectionSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	UpdateVisualDetection();
 }
 
 void UEX3_DetectionSystem::InitEvents()
@@ -39,13 +43,23 @@ void UEX3_DetectionSystem::InitEvents()
 	onPlayerSpotted.AddLambda([this]()
 	{
 		m_IsPlayerSpotted = true;
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(m_Owner->GetController(), FVector(0,0,m_Owner->GetActorLocation().Z));
+	});
+
+	onPlayerTracked.AddLambda([this](FVector _pos)
+	{
+		
 	});
 
 	onPlayerLost.AddLambda([this]()
 	{
+		m_PlayerSpotted = nullptr;
 		m_IsPlayerSpotted = false;
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(m_Owner->GetController(), FVector(1000, 0, m_Owner->GetActorLocation().Z));
+	});
+
+	if (!m_Brain)return;
+	m_Brain->OnUpdateBrain()->AddLambda([this]()
+	{
+		UpdateVisualDetection();
 	});
 }
 
@@ -53,15 +67,24 @@ void UEX3_DetectionSystem::InitComponent()
 {
 	m_Owner = Cast<AEX3_IAPawn>(GetOwner());
 	if (!m_Owner)return;
+	//m_Brain = m_Owner->GetBrain();
 	m_ActorToIgnore = TArray<AActor*>();
 	m_ActorToIgnore.Add(m_Owner);
 	m_OwnerEyesLocation = m_Owner->GetEyesLocation();
+	InitEvents();
 }
+
+/*void UEX3_DetectionSystem::SetBrain(UEX3_Brain& _brain)
+{
+	UE_LOG(LogTemp, Warning, TEXT("CCC"));
+	m_Brain = &_brain;
+}*/
 
 void UEX3_DetectionSystem::UpdateVisualDetection()
 {
 	const bool _seeEnnemy = VisionDetection();
 	if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpotted.Broadcast();
+	else if (_seeEnnemy && m_IsPlayerSpotted && m_PlayerSpotted) onPlayerTracked.Broadcast(m_PlayerSpotted->GetActorLocation());
 	else if (!_seeEnnemy && m_IsPlayerSpotted) onPlayerLost.Broadcast();
 }
 
@@ -69,13 +92,13 @@ bool UEX3_DetectionSystem::VisionDetection()
 {
 	const float _angleLeft = -m_AngleVision / 2;
 	const float _angleRight = m_AngleVision / 2;
-	bool _hit = false;
+	bool _hasHit = false;
 	for (int i = _angleLeft; i < _angleRight; i++) 
 	{
-		_hit |= VisionLineTrace(i);
-		//if (_hit)break;
+		_hasHit |= VisionLineTrace(i);
+		//if (_hasHit)break;
 	}
-	return _hit;
+	return _hasHit;
 }
 
 bool UEX3_DetectionSystem::VisionLineTrace(const float _angle)
@@ -87,6 +110,15 @@ bool UEX3_DetectionSystem::VisionLineTrace(const float _angle)
 	const FVector _end = _start + _rotatedForward * m_DistanceVision;
 	const bool _hasHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), _start, _end, ETraceTypeQuery::TraceTypeQuery3, true, m_ActorToIgnore, EDrawDebugTrace::ForOneFrame, _hit, true);
 	if (!_hasHit) return false;
-	return Cast<ACharacter>(_hit.Actor) != nullptr;
+	ACharacter* _target = Cast<ACharacter>(_hit.Actor);
+	if (!_target) return false;
+	RegisterTarget(_target);
+	return true;
+}
+
+void UEX3_DetectionSystem::RegisterTarget(ACharacter* _target)
+{
+	if (m_PlayerSpotted)return;
+	m_PlayerSpotted = _target;
 }
 

@@ -41,6 +41,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+	FORCEINLINE UEX3_Brain* GetBrain() const { return m_Brain; };
 	FORCEINLINE USceneComponent* GetEyesLocation() const { return m_EyesLocation; };
 
 public:

@@ -4,6 +4,7 @@
 #include "EX3_Brain.h"
 #include "EX3_FSM.h"
 #include "EX3_DetectionSystem.h"
+#include "EX3_MovementSystem.h"
 #include "EX3_IA/IA/Pawn/EX3_IAPawn.h"
 
 // Sets default values for this component's properties
@@ -20,6 +21,7 @@ UEX3_Brain::UEX3_Brain()
 void UEX3_Brain::BeginPlay()
 {
 	Super::BeginPlay();
+	InitEventsComponents();
 }
 
 void UEX3_Brain::PostInitProperties()
@@ -33,8 +35,7 @@ void UEX3_Brain::PostInitProperties()
 void UEX3_Brain::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	onUpdateBrain.Broadcast();
 }
 
 void UEX3_Brain::CreateComponents()
@@ -43,6 +44,8 @@ void UEX3_Brain::CreateComponents()
 	m_FSM = CreateDefaultSubobject<UEX3_FSM>(TEXT("FSM"));
 	//Create Detection System
 	m_DetectionSystem = CreateDefaultSubobject<UEX3_DetectionSystem>(TEXT("DetectionSystem"));
+	//Create Movement System
+	m_MovementSystem = CreateDefaultSubobject<UEX3_MovementSystem>(TEXT("MovementSystem"));
 }
 
 void UEX3_Brain::InitOwner()
@@ -56,5 +59,17 @@ void UEX3_Brain::AttachComponentsToOwner()
 	if (!m_Owner)return;
 	m_Owner->AddOwnedComponent(m_FSM);
 	m_Owner->AddOwnedComponent(m_DetectionSystem);
+	m_Owner->AddOwnedComponent(m_MovementSystem);
+}
+
+void UEX3_Brain::InitEventsComponents()
+{
+	if (!m_DetectionSystem || !m_MovementSystem) return;
+	m_DetectionSystem->OnPlayerTracked()->AddLambda([this](FVector _pos) 
+	{
+		m_MovementSystem->SetPosToMove(_pos);
+		m_MovementSystem->MoveToPos();
+		m_MovementSystem->RotateToPos();
+	});
 }
 

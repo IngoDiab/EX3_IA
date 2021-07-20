@@ -9,6 +9,7 @@
 class AEX3_IAPawn;
 class UEX3_FSM;
 class UEX3_DetectionSystem;
+class UEX3_MovementSystem;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EX3_IA_API UEX3_Brain : public UActorComponent
@@ -18,7 +19,11 @@ class EX3_IA_API UEX3_Brain : public UActorComponent
 	UPROPERTY(EditAnywhere) AEX3_IAPawn* m_Owner = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_FSM* m_FSM = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_DetectionSystem* m_DetectionSystem = nullptr;
+	UPROPERTY(EditAnywhere) UEX3_MovementSystem* m_MovementSystem = nullptr;
 
+public:
+	DECLARE_EVENT(UEX3_Brain, UpdateBrain)
+	UpdateBrain onUpdateBrain;
 
 public:	
 	// Sets default values for this component's properties
@@ -33,7 +38,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	FORCEINLINE UpdateBrain* OnUpdateBrain() { return &onUpdateBrain; };
+
+	FORCEINLINE UEX3_MovementSystem* GetMovementSystem() { return m_MovementSystem; };
+
+public:
 	void CreateComponents();
 	void InitOwner();
 	void AttachComponentsToOwner();
+
+	void InitEventsComponents();
 };
