@@ -40,6 +40,8 @@ void UEX3_DetectionSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UEX3_DetectionSystem::InitEvents()
 {
+	onPlayerSpottedDelegate.AddDynamic(this, &UEX3_DetectionSystem::SpotTarget);
+
 	onPlayerSpotted.AddLambda([this]()
 	{
 		m_IsPlayerSpotted = true;
@@ -74,16 +76,10 @@ void UEX3_DetectionSystem::InitComponent()
 	InitEvents();
 }
 
-/*void UEX3_DetectionSystem::SetBrain(UEX3_Brain& _brain)
-{
-	UE_LOG(LogTemp, Warning, TEXT("CCC"));
-	m_Brain = &_brain;
-}*/
-
 void UEX3_DetectionSystem::UpdateVisualDetection()
 {
 	const bool _seeEnnemy = VisionDetection();
-	if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpotted.Broadcast();
+	if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpottedDelegate.Broadcast(m_PlayerSpotted);
 	else if (_seeEnnemy && m_IsPlayerSpotted && m_PlayerSpotted) onPlayerTracked.Broadcast(m_PlayerSpotted->GetActorLocation());
 	else if (!_seeEnnemy && m_IsPlayerSpotted) onPlayerLost.Broadcast();
 }
@@ -114,6 +110,12 @@ bool UEX3_DetectionSystem::VisionLineTrace(const float _angle)
 	if (!_target) return false;
 	RegisterTarget(_target);
 	return true;
+}
+
+void UEX3_DetectionSystem::SpotTarget(ACharacter* _target)
+{
+	UE_LOG(LogTemp, Warning, TEXT("SPOT"));
+	onPlayerSpotted.Broadcast();
 }
 
 void UEX3_DetectionSystem::RegisterTarget(ACharacter* _target)

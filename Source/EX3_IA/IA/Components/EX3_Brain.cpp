@@ -65,6 +65,9 @@ void UEX3_Brain::AttachComponentsToOwner()
 void UEX3_Brain::InitEventsComponents()
 {
 	if (!m_DetectionSystem || !m_MovementSystem) return;
+
+	//m_FightSystem->OnPlayerSpottedDelegate()->AddDynamic(m_FightSystem, /*SETTARGET*/);
+	
 	m_DetectionSystem->OnPlayerTracked()->AddLambda([this](FVector _pos) 
 	{
 		m_MovementSystem->SetPosToMove(_pos);

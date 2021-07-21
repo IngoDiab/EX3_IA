@@ -27,6 +27,9 @@ class EX3_IA_API UEX3_DetectionSystem : public UActorComponent
 	UPROPERTY(VisibleAnywhere) bool m_IsPlayerSpotted = false;
 
 public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerSpottedDelegate, ACharacter*, _target);
+	FPlayerSpottedDelegate onPlayerSpottedDelegate;
+
 	DECLARE_EVENT(UEX3_DetectionSystem, PlayerSpotted)
 	PlayerSpotted onPlayerSpotted;
 
@@ -50,6 +53,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	FORCEINLINE FPlayerSpottedDelegate* OnPlayerSpottedDelegate() { return &onPlayerSpottedDelegate; };
 	FORCEINLINE PlayerSpotted* OnPlayerSpotted() { return &onPlayerSpotted; };
 	FORCEINLINE PlayerTracked* OnPlayerTracked() { return &onPlayerTracked; };
 	FORCEINLINE PlayerLost* OnPlayerLost() { return &onPlayerLost; };
@@ -57,10 +61,10 @@ public:
 public:
 	void InitEvents();
 	void InitComponent();
-	//void SetBrain(UEX3_Brain& _brain);
 
 	void UpdateVisualDetection();
 	bool VisionDetection();
 	bool VisionLineTrace(const float _angle);
+	UFUNCTION() void SpotTarget(ACharacter* _target);
 	void RegisterTarget(ACharacter* _target);
 };

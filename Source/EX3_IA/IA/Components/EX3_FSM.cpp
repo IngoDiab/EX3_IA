@@ -3,6 +3,11 @@
 
 #include "EX3_FSM.h"
 
+#include "States/EX3_IDLEState.h"
+#include "States/EX3_MoveState.h"
+
+#include "Transitions/EX3_IDLE_To_Move.h"
+
 // Sets default values for this component's properties
 UEX3_FSM::UEX3_FSM()
 {
@@ -30,5 +35,12 @@ void UEX3_FSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UEX3_FSM::InitFSM()
+{
+	UEX3_IDLEState* _idleState = NewObject<UEX3_IDLEState>();
+	UEX3_MoveState* _moveState = NewObject<UEX3_MoveState>();
+	UEX3_IDLE_To_Move* _IDLE_To_Move = NewObject<UEX3_IDLE_To_Move>();
 }
 

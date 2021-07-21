@@ -43,7 +43,6 @@ void UEX3_MovementSystem::InitComponent()
 {
 	m_Owner = Cast<AEX3_IAPawn>(GetOwner());
 	if (!m_Owner)return;
-	UE_LOG(LogTemp, Warning, TEXT("AAAAA"));
 	m_Brain = m_Owner->GetBrain();
 }
 
