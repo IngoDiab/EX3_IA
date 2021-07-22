@@ -1,0 +1,20 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "EX3_Move_To_IDLE.h"
+
+#include"EX3_IA/IA/Components/EX3_FSM.h"
+
+void UEX3_Move_To_IDLE::EnterTransition() const
+{
+}
+
+void UEX3_Move_To_IDLE::ExitTransition() const
+{
+}
+
+bool UEX3_Move_To_IDLE::CheckCondition() const
+{
+	UE_LOG(LogTemp, Warning, TEXT("pd"));
+	return !m_FSM->IsPlayerSeen();
+}

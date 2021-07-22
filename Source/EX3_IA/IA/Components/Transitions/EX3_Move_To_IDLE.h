@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "EX3_Transition.h"
-#include "EX3_IDLE_To_Move.generated.h"
+#include "EX3_Move_To_IDLE.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EX3_IA_API UEX3_IDLE_To_Move : public UEX3_Transition
+class EX3_IA_API UEX3_Move_To_IDLE : public UEX3_Transition
 {
 	GENERATED_BODY()
-
+	
 public:
 	void EnterTransition() const override;
 	void ExitTransition() const override;

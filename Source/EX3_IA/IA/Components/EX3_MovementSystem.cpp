@@ -44,6 +44,16 @@ void UEX3_MovementSystem::InitComponent()
 	m_Owner = Cast<AEX3_IAPawn>(GetOwner());
 	if (!m_Owner)return;
 	m_Brain = m_Owner->GetBrain();
+	InitEvents();
+}
+
+void UEX3_MovementSystem::InitEvents()
+{
+	onMoveToPos.AddLambda([this]()
+	{
+		MoveToPos();
+		RotateToPos();
+	});
 }
 
 void UEX3_MovementSystem::MoveToPos()

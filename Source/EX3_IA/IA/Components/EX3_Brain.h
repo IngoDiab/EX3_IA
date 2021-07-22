@@ -40,6 +40,8 @@ public:
 public:
 	FORCEINLINE UpdateBrain* OnUpdateBrain() { return &onUpdateBrain; };
 
+	FORCEINLINE UEX3_FSM* GetFSM() { return m_FSM; };
+	FORCEINLINE UEX3_DetectionSystem* GetDetectionSystem() { return m_DetectionSystem; };
 	FORCEINLINE UEX3_MovementSystem* GetMovementSystem() { return m_MovementSystem; };
 
 public:

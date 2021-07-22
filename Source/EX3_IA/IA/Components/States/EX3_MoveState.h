@@ -14,4 +14,8 @@ class EX3_IA_API UEX3_MoveState : public UEX3_State
 {
 	GENERATED_BODY()
 	
+public:
+	void EnterState() const override;
+	UEX3_Transition* UpdateState() const override;
+	void ExitState() const override;
 };

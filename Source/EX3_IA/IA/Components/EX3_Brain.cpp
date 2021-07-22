@@ -22,6 +22,7 @@ void UEX3_Brain::BeginPlay()
 {
 	Super::BeginPlay();
 	InitEventsComponents();
+	m_FSM->StartFSM();
 }
 
 void UEX3_Brain::PostInitProperties()
@@ -68,11 +69,19 @@ void UEX3_Brain::InitEventsComponents()
 
 	//m_FightSystem->OnPlayerSpottedDelegate()->AddDynamic(m_FightSystem, /*SETTARGET*/);
 	
+	m_DetectionSystem->OnPlayerSpotted()->AddLambda([this]()
+	{
+		m_FSM->SetIsPlayerSeen(true);
+	});
+
 	m_DetectionSystem->OnPlayerTracked()->AddLambda([this](FVector _pos) 
 	{
 		m_MovementSystem->SetPosToMove(_pos);
-		m_MovementSystem->MoveToPos();
-		m_MovementSystem->RotateToPos();
+	});
+
+	m_DetectionSystem->OnPlayerLost()->AddLambda([this]()
+	{
+		m_FSM->SetIsPlayerSeen(false);
 	});
 }
 

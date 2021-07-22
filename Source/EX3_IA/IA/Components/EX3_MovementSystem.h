@@ -19,6 +19,13 @@ class EX3_IA_API UEX3_MovementSystem : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere) FVector m_PosToMove = FVector(0);
 
+public:
+	DECLARE_EVENT(UEX3_MovementSystem, MovingToPos)
+	MovingToPos onMoveToPos;
+	
+	DECLARE_EVENT(UEX3_MovementSystem, PosReached)
+	PosReached onPosReached;
+
 public:	
 	// Sets default values for this component's properties
 	UEX3_MovementSystem();
@@ -33,10 +40,13 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	FORCEINLINE MovingToPos* OnMoveToPos() { return &onMoveToPos; };
+	FORCEINLINE PosReached* OnPosReached() { return &onPosReached; };
+
 	FORCEINLINE void SetPosToMove(const FVector _pos) { m_PosToMove = _pos; };
 
 public:
-	//void InitEvents();
+	void InitEvents();
 	void InitComponent();
 	void MoveToPos();
 	void RotateToPos();
