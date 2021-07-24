@@ -2,10 +2,12 @@
 
 
 #include "EX3_Brain.h"
+
 #include "EX3_FSM.h"
 #include "EX3_DetectionSystem.h"
 #include "EX3_MovementSystem.h"
 #include "EX3_IA/IA/Pawn/EX3_IAPawn.h"
+#include "EX3_IA/IA/Animation/EX3_IAAnimation.h"
 
 // Sets default values for this component's properties
 UEX3_Brain::UEX3_Brain()
@@ -21,6 +23,7 @@ UEX3_Brain::UEX3_Brain()
 void UEX3_Brain::BeginPlay()
 {
 	Super::BeginPlay();
+	InitAnimation();
 	InitEventsComponents();
 	m_FSM->StartFSM();
 }
@@ -55,6 +58,16 @@ void UEX3_Brain::InitOwner()
 	AttachComponentsToOwner();
 }
 
+void UEX3_Brain::InitAnimation()
+{
+	if (!m_Owner)return;
+	UE_LOG(LogTemp, Warning, TEXT("BBB"));
+	const USkeletalMeshComponent* _mesh = m_Owner->GetSkeletalMesh();
+	if (!_mesh) return;
+	UE_LOG(LogTemp, Warning, TEXT("CCC"));
+	m_Animations = Cast<UEX3_IAAnimation>(_mesh->GetAnimInstance());
+}
+
 void UEX3_Brain::AttachComponentsToOwner()
 {
 	if (!m_Owner)return;
@@ -82,6 +95,16 @@ void UEX3_Brain::InitEventsComponents()
 	m_DetectionSystem->OnPlayerLost()->AddLambda([this]()
 	{
 		m_FSM->SetIsPlayerSeen(false);
+	});
+
+	m_MovementSystem->OnMoveToPos()->AddLambda([this]()
+	{
+		m_Animations->SetIsMoving(true);
+	});
+
+	m_MovementSystem->OnPosReached()->AddLambda([this]()
+	{
+		m_Animations->SetIsMoving(false);
 	});
 }
 

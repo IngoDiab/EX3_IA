@@ -83,9 +83,7 @@ void UEX3_FSM::UpdateFSM()
 {
 	if (!m_IsStarted || !m_CurrentState)return;
 	const UEX3_Transition* _nextTransition = m_CurrentState->UpdateState();
-	//UE_LOG(LogTemp, Warning, TEXT("Transition1"));
 	if (!_nextTransition)return;
-	//UE_LOG(LogTemp, Warning, TEXT("Transition2"));
 	SetNextState(_nextTransition);
 }
 

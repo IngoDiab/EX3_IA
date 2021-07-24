@@ -7,6 +7,7 @@
 #include "EX3_Brain.generated.h"
 
 class AEX3_IAPawn;
+class UEX3_IAAnimation;
 class UEX3_FSM;
 class UEX3_DetectionSystem;
 class UEX3_MovementSystem;
@@ -17,6 +18,7 @@ class EX3_IA_API UEX3_Brain : public UActorComponent
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere) AEX3_IAPawn* m_Owner = nullptr;
+	UPROPERTY(EditAnywhere) UEX3_IAAnimation* m_Animations = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_FSM* m_FSM = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_DetectionSystem* m_DetectionSystem = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_MovementSystem* m_MovementSystem = nullptr;
@@ -47,6 +49,7 @@ public:
 public:
 	void CreateComponents();
 	void InitOwner();
+	void InitAnimation();
 	void AttachComponentsToOwner();
 
 	void InitEventsComponents();

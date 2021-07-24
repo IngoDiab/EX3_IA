@@ -15,6 +15,5 @@ void UEX3_Move_To_IDLE::ExitTransition() const
 
 bool UEX3_Move_To_IDLE::CheckCondition() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("pd"));
 	return !m_FSM->IsPlayerSeen();
 }

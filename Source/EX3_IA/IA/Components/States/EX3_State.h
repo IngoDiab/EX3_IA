@@ -19,7 +19,7 @@ protected:
 	UPROPERTY(VisibleAnywhere) UEX3_Brain* m_Brain;
 	
 public:
-	void InitState(UEX3_Brain& _brain);
+	virtual void InitState(UEX3_Brain& _brain);
 	void AddTransition(UEX3_Transition& _transition);
 
 	virtual void EnterState() const PURE_VIRTUAL(UEX3_State::BeginState, );

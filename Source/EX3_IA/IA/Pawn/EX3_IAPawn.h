@@ -42,6 +42,7 @@ public:
 
 public:
 	FORCEINLINE UEX3_Brain* GetBrain() const { return m_Brain; };
+	FORCEINLINE USkeletalMeshComponent* GetSkeletalMesh() const { return m_Mesh; };
 	FORCEINLINE USceneComponent* GetEyesLocation() const { return m_EyesLocation; };
 
 public:
