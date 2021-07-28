@@ -62,7 +62,6 @@ void UEX3_MovementSystem::UpdateMovementSystem()
 {
 	if (IsAtPos(m_PosToMove)) onPosReached.Broadcast();
 	else onMoveToPos.Broadcast(); 
-	RotateToPos();
 }
 
 void UEX3_MovementSystem::InitEvents()
@@ -71,14 +70,14 @@ void UEX3_MovementSystem::InitEvents()
 	{
 		m_MinDist = m_MaxDistApproach;
 		MoveToPos();
-		//RotateToPos();
+		RotateToPos();
 	});
 	
 	onPosReached.AddLambda([this]()
 	{
 		if (m_IsInChase) m_MinDist = m_MaxDistMoveAway;
 		m_Controller->StopMovement();
-		UE_LOG(LogTemp, Warning, TEXT("REACHED"));
+		RotateToPos();
 	});
 }
 

@@ -9,6 +9,8 @@
 #include "Components/ArrowComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
+#include "Kismet/KismetMathLibrary.h"
+
 // Sets default values
 AEX3_IAPawn::AEX3_IAPawn()
 {
@@ -30,6 +32,7 @@ void AEX3_IAPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	Gravity();
+	RootMotion();
 }
 
 // Called to bind functionality to input
@@ -83,5 +86,27 @@ void AEX3_IAPawn::Gravity()
 	const FVector _currentVelocity = m_PawnMovement->Velocity;
 	const FVector _newVelocity = FVector(_currentVelocity.X, _currentVelocity.Y, _currentVelocity.Z - 98.1f);
 	m_PawnMovement->Velocity = _newVelocity;
+}
+
+void AEX3_IAPawn::RootMotion()
+{
+	if (!m_Mesh)return;
+	FRootMotionMovementParams _Params = m_Mesh->GetAnimInstance()->ConsumeExtractedRootMotion(1.0f);
+	if (!_Params.bHasRootMotion)
+	{
+		needRotateRM = true;
+		return;
+	}
+	FTransform _newTransform = _Params.GetRootMotionTransform();
+
+	FTransform _test = FTransform();
+	_test.SetRotation(_newTransform.GetRotation() + FRotator(0, -90 * needRotateRM, 0).Quaternion());
+	needRotateRM = false;
+	_newTransform.GetLocation().Normalize();
+	FVector _testPos = _newTransform.GetLocation().RotateAngleAxis(-90, GetActorUpVector());
+	_test.SetLocation(_testPos);
+	_test.SetScale3D(FVector(1));
+
+	AddActorLocalTransform(_test, true);
 }
 

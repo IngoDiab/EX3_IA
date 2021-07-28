@@ -100,11 +100,13 @@ void UEX3_Brain::InitEventsComponents()
 	m_MovementSystem->OnMoveToPos()->AddLambda([this]()
 	{
 		m_Animations->SetIsMoving(true);
+		m_Animations->SetIsAtRange(false);
 	});
 
 	m_MovementSystem->OnPosReached()->AddLambda([this]()
 	{
 		m_Animations->SetIsMoving(false);
+		m_Animations->SetIsAtRange(true);
 	});
 }
 

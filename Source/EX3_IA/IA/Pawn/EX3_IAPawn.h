@@ -25,6 +25,9 @@ class EX3_IA_API AEX3_IAPawn : public APawn
 	UPROPERTY(EditAnywhere) USkeletalMeshComponent* m_Mesh = nullptr;
 	UPROPERTY(EditAnywhere) UFloatingPawnMovement* m_PawnMovement = nullptr;
 
+	//FIX RM
+	UPROPERTY(EditAnywhere) bool needRotateRM = true;
+
 public:
 	// Sets default values for this pawn's properties
 	AEX3_IAPawn();
@@ -52,4 +55,6 @@ public:
 	void CreateComponentsRelativeToMesh();
 
 	void Gravity();
+
+	void RootMotion();
 };
