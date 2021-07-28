@@ -17,7 +17,7 @@ class EX3_IA_API UEX3_MovementSystem : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere) AAIController* m_Controller = nullptr;
 	UPROPERTY(VisibleAnywhere) AEX3_IAPawn* m_Owner = nullptr;
-	UPROPERTY(VisibleAnywhere) UEX3_Brain* m_Brain = nullptr;
+	//UPROPERTY(VisibleAnywhere) UEX3_Brain* m_Brain = nullptr;
 
 	UPROPERTY(VisibleAnywhere) FVector m_PosToMove = FVector(0);
 	UPROPERTY(VisibleAnywhere) TArray<FVector> m_Path;
@@ -54,15 +54,16 @@ public:
 	FORCEINLINE void SetIsInChase(const bool _inChase) { m_IsInChase = _inChase; };
 
 public:
-	void InitEvents();
+	//void InitEvents();
 	void InitComponent();
 	bool IsAtPos(const FVector _pos);
 
 	void UpdateMovementSystem();
-	//void UdpateMovementChase();
-	//void UpdateMovementPatroll();
 
 	void MoveToPos();
 	void RotateToPos();
+
+	void GoToPos();
+	void Stop();
 		
 };

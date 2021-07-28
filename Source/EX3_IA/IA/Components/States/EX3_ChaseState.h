@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "EX3_State.h"
-#include "EX3_MoveState.generated.h"
+#include "EX3_ChaseState.generated.h"
 
 class UEX3_MovementSystem;
 
 UCLASS()
-class EX3_IA_API UEX3_MoveState : public UEX3_State
+class EX3_IA_API UEX3_ChaseState : public UEX3_State
 {
 	GENERATED_BODY()
 
@@ -17,9 +17,9 @@ class EX3_IA_API UEX3_MoveState : public UEX3_State
 	
 public:
 	void InitState(UEX3_Brain& _brain) override;
-	void EnterState() const override;
-	UEX3_Transition* UpdateState() const override;
-	void ExitState() const override;
+	void EnterState() override;
+	UEX3_Transition* UpdateState() override;
+	void ExitState() override;
 
 public:
 	void UpdateMove() const;

@@ -8,6 +8,7 @@
 
 class UEX3_Transition;
 class UEX3_Brain;
+class UEX3_FSM;
 
 UCLASS(ABSTRACT)
 class EX3_IA_API UEX3_State : public UObject
@@ -17,12 +18,13 @@ class EX3_IA_API UEX3_State : public UObject
 protected:
 	UPROPERTY(VisibleAnywhere) TArray<UEX3_Transition*> m_Transitions;
 	UPROPERTY(VisibleAnywhere) UEX3_Brain* m_Brain;
+	UPROPERTY(VisibleAnywhere) UEX3_FSM* m_FSM;
 	
 public:
 	virtual void InitState(UEX3_Brain& _brain);
 	void AddTransition(UEX3_Transition& _transition);
 
-	virtual void EnterState() const PURE_VIRTUAL(UEX3_State::BeginState, );
-	virtual UEX3_Transition* UpdateState() const; // PURE_VIRTUAL(UEX3_State::UpdateState, return nullptr;);
-	virtual void ExitState() const PURE_VIRTUAL(UEX3_State::ExitState, );
+	virtual void EnterState() PURE_VIRTUAL(UEX3_State::BeginState, );
+	virtual UEX3_Transition* UpdateState();
+	virtual void ExitState() PURE_VIRTUAL(UEX3_State::ExitState, );
 };

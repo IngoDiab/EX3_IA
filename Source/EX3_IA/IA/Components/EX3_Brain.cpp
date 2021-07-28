@@ -6,6 +6,7 @@
 #include "EX3_FSM.h"
 #include "EX3_DetectionSystem.h"
 #include "EX3_MovementSystem.h"
+#include "EX3_CACSystem.h"
 #include "EX3_IA/IA/Pawn/EX3_IAPawn.h"
 #include "EX3_IA/IA/Animation/EX3_IAAnimation.h"
 
@@ -50,6 +51,8 @@ void UEX3_Brain::CreateComponents()
 	m_DetectionSystem = CreateDefaultSubobject<UEX3_DetectionSystem>(TEXT("DetectionSystem"));
 	//Create Movement System
 	m_MovementSystem = CreateDefaultSubobject<UEX3_MovementSystem>(TEXT("MovementSystem"));
+	//Create CAC System
+	m_CACSystem = CreateDefaultSubobject<UEX3_CACSystem>(TEXT("CACSystem"));
 }
 
 void UEX3_Brain::InitOwner()
@@ -61,10 +64,8 @@ void UEX3_Brain::InitOwner()
 void UEX3_Brain::InitAnimation()
 {
 	if (!m_Owner)return;
-	UE_LOG(LogTemp, Warning, TEXT("BBB"));
 	const USkeletalMeshComponent* _mesh = m_Owner->GetSkeletalMesh();
 	if (!_mesh) return;
-	UE_LOG(LogTemp, Warning, TEXT("CCC"));
 	m_Animations = Cast<UEX3_IAAnimation>(_mesh->GetAnimInstance());
 }
 
@@ -74,39 +75,70 @@ void UEX3_Brain::AttachComponentsToOwner()
 	m_Owner->AddOwnedComponent(m_FSM);
 	m_Owner->AddOwnedComponent(m_DetectionSystem);
 	m_Owner->AddOwnedComponent(m_MovementSystem);
+	m_Owner->AddOwnedComponent(m_CACSystem);
 }
 
 void UEX3_Brain::InitEventsComponents()
 {
 	if (!m_DetectionSystem || !m_MovementSystem) return;
 
-	//m_FightSystem->OnPlayerSpottedDelegate()->AddDynamic(m_FightSystem, /*SETTARGET*/);
-	
+	onUpdateBrain.AddLambda([this]()
+	{
+		m_DetectionSystem->UpdateVisualDetection();
+	});
+
+	/// <summary>
+	/// //////////////////////////////////////////////////////////
+	/// </summary>
+
 	m_DetectionSystem->OnPlayerSpotted()->AddLambda([this]()
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("AAAA"));
+		m_DetectionSystem->SetIsSpotPlayer(true);
 		m_FSM->SetIsPlayerSeen(true);
 	});
 
-	m_DetectionSystem->OnPlayerTracked()->AddLambda([this](FVector _pos) 
+	m_DetectionSystem->OnPlayerTracked()->AddLambda([this](FVector _targetPos)
 	{
-		m_MovementSystem->SetPosToMove(_pos);
+		m_MovementSystem->SetPosToMove(_targetPos);
 	});
 
 	m_DetectionSystem->OnPlayerLost()->AddLambda([this]()
 	{
+		m_DetectionSystem->ResetTarget();
 		m_FSM->SetIsPlayerSeen(false);
 	});
 
+	/// <summary>
+	/// //////////////////////////////////////////////////////
+	/// </summary>
+
 	m_MovementSystem->OnMoveToPos()->AddLambda([this]()
 	{
+		m_MovementSystem->GoToPos();
 		m_Animations->SetIsMoving(true);
-		m_Animations->SetIsAtRange(false);
+		m_FSM->SetIsAtRange(false);
 	});
 
 	m_MovementSystem->OnPosReached()->AddLambda([this]()
 	{
+		m_MovementSystem->Stop();
 		m_Animations->SetIsMoving(false);
-		m_Animations->SetIsAtRange(true);
+		m_FSM->SetIsAtRange(true);
+	});
+
+
+	/// <summary>
+	/// ////////////////////////////////////////////////////
+	/// </summary>
+	m_CACSystem->OnHeavyAttackCombo()->AddLambda([this]()
+	{
+		m_Animations->SetIsHeavyAttacking(true);
+	});
+
+	m_CACSystem->OnLightAttackCombo()->AddLambda([this]()
+	{
+		m_Animations->SetIsLightAttacking(true);
 	});
 }
 

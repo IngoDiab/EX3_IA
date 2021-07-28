@@ -3,15 +3,15 @@
 
 #include "EX3_IDLEState.h"
 
-void UEX3_IDLEState::EnterState() const
+void UEX3_IDLEState::EnterState()
 {
 }
 
-UEX3_Transition* UEX3_IDLEState::UpdateState() const
+UEX3_Transition* UEX3_IDLEState::UpdateState()
 {
 	return Super::UpdateState();
 }
 
-void UEX3_IDLEState::ExitState() const
+void UEX3_IDLEState::ExitState()
 {
 }

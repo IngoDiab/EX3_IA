@@ -28,25 +28,21 @@ void UEX3_MovementSystem::PostInitProperties()
 void UEX3_MovementSystem::BeginPlay()
 {
 	Super::BeginPlay();
-	InitComponent();
-}
+	InitComponent();}
 
 
 // Called every frame
 void UEX3_MovementSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void UEX3_MovementSystem::InitComponent()
 {
 	m_Owner = Cast<AEX3_IAPawn>(GetOwner());
 	if (!m_Owner)return;
-	m_Brain = m_Owner->GetBrain();
 	m_Controller = UAIBlueprintHelperLibrary::GetAIController(m_Owner);
-	InitEvents();
+	m_PosToMove = m_Owner->GetActorLocation();
 }
 
 bool UEX3_MovementSystem::IsAtPos(const FVector _pos)
@@ -54,7 +50,7 @@ bool UEX3_MovementSystem::IsAtPos(const FVector _pos)
 	if (!m_Owner) return true;
 	const FVector _currentPos = m_Owner->GetActorLocation();
 	const float _dist = FVector::Distance(_currentPos, _pos);
-	UE_LOG(LogTemp, Warning, TEXT("%f"), _dist);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), _dist);
 	return FVector::Distance(_currentPos, _pos) < m_MinDist;
 }
 
@@ -62,23 +58,6 @@ void UEX3_MovementSystem::UpdateMovementSystem()
 {
 	if (IsAtPos(m_PosToMove)) onPosReached.Broadcast();
 	else onMoveToPos.Broadcast(); 
-}
-
-void UEX3_MovementSystem::InitEvents()
-{
-	onMoveToPos.AddLambda([this]()
-	{
-		m_MinDist = m_MaxDistApproach;
-		MoveToPos();
-		RotateToPos();
-	});
-	
-	onPosReached.AddLambda([this]()
-	{
-		if (m_IsInChase) m_MinDist = m_MaxDistMoveAway;
-		m_Controller->StopMovement();
-		RotateToPos();
-	});
 }
 
 void UEX3_MovementSystem::MoveToPos()
@@ -94,5 +73,19 @@ void UEX3_MovementSystem::RotateToPos()
 	const FRotator _lookAtRotation = UKismetMathLibrary::FindLookAtRotation(m_Owner->GetActorLocation(), m_PosToMove);
 	const FRotator _newRotation = UKismetMathLibrary::RInterpTo_Constant(m_Owner->GetActorRotation(), _lookAtRotation, GetWorld()->TimeSeconds, m_SpeedRotate);
 	m_Owner->SetActorRotation(_newRotation);
+}
+
+void UEX3_MovementSystem::GoToPos()
+{
+	m_MinDist = m_MaxDistApproach;
+	MoveToPos();
+	RotateToPos();
+}
+
+void UEX3_MovementSystem::Stop()
+{
+	if (m_IsInChase) m_MinDist = m_MaxDistMoveAway;
+	m_Controller->StopMovement();
+	RotateToPos();
 }
 

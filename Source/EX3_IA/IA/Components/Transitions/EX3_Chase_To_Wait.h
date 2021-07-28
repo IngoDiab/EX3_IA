@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "EX3_Transition.h"
-#include "EX3_IDLE_To_Move.generated.h"
+#include "EX3_Chase_To_Wait.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class EX3_IA_API UEX3_IDLE_To_Move : public UEX3_Transition
+class EX3_IA_API UEX3_Chase_To_Wait : public UEX3_Transition
 {
 	GENERATED_BODY()
 
@@ -19,4 +19,5 @@ public:
 	void ExitTransition() const override;
 
 	bool CheckCondition() const override;
+	
 };

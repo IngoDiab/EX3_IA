@@ -7,10 +7,14 @@
 #include "EX3_Brain.h"
 
 #include "States/EX3_IDLEState.h"
-#include "States/EX3_MoveState.h"
+#include "States/EX3_ChaseState.h"
+#include "States/EX3_WaitState.h"
+#include "States/EX3_CACState.h"
 
-#include "Transitions/EX3_IDLE_To_Move.h"
-#include "Transitions/EX3_Move_To_IDLE.h"
+#include "Transitions/EX3_IDLE_To_Chase.h"
+#include "Transitions/EX3_Chase_To_IDLE.h"
+#include "Transitions/EX3_Chase_To_Wait.h"
+#include "Transitions/EX3_Wait_To_Chase.h"
 
 // Sets default values for this component's properties
 UEX3_FSM::UEX3_FSM()
@@ -52,18 +56,30 @@ void UEX3_FSM::InitFSM()
 	UEX3_IDLEState* _idleState = NewObject<UEX3_IDLEState>();
 	m_States.Add(_idleState);
 
-	//Create MoveState
-	UEX3_MoveState* _moveState = NewObject<UEX3_MoveState>();
-	m_States.Add(_moveState);
+	//Create ChaseState
+	UEX3_ChaseState* _chaseState = NewObject<UEX3_ChaseState>();
+	m_States.Add(_chaseState);
 
-	//Create IDLE->Move Transition
-	UEX3_IDLE_To_Move* _IDLE_To_Move = NewObject<UEX3_IDLE_To_Move>();
-	_IDLE_To_Move->InitTransition(*this, *_moveState);
-	_idleState->AddTransition(*_IDLE_To_Move);
+	UEX3_WaitState* _waitState = NewObject<UEX3_WaitState>();
+	m_States.Add(_waitState);
+
+	//Create IDLE/Chase Transition
+	UEX3_IDLE_To_Chase* _IDLE_To_Chase = NewObject<UEX3_IDLE_To_Chase>();
+	_IDLE_To_Chase->InitTransition(*this, *_chaseState);
+	_idleState->AddTransition(*_IDLE_To_Chase);
 	
-	UEX3_Move_To_IDLE* _Move_To_IDLE = NewObject<UEX3_Move_To_IDLE>();
-	_Move_To_IDLE->InitTransition(*this, *_idleState);
-	_moveState->AddTransition(*_Move_To_IDLE);
+	UEX3_Chase_To_IDLE* _Chase_To_IDLE = NewObject<UEX3_Chase_To_IDLE>();
+	_Chase_To_IDLE->InitTransition(*this, *_idleState);
+	_chaseState->AddTransition(*_Chase_To_IDLE);
+
+	//Create Chase/Wait Transition
+	UEX3_Chase_To_Wait* _Chase_To_Wait = NewObject<UEX3_Chase_To_Wait>();
+	_Chase_To_Wait->InitTransition(*this, *_waitState);
+	_chaseState->AddTransition(*_Chase_To_Wait);
+
+	UEX3_Wait_To_Chase* _Wait_To_Chase = NewObject<UEX3_Wait_To_Chase>();
+	_Wait_To_Chase->InitTransition(*this, *_chaseState);
+	_waitState->AddTransition(*_Wait_To_Chase);
 
 	//Init all state with brain
 	for (UEX3_State* _state : m_States)

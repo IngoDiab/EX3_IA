@@ -11,6 +11,7 @@ class UEX3_IAAnimation;
 class UEX3_FSM;
 class UEX3_DetectionSystem;
 class UEX3_MovementSystem;
+class UEX3_CACSystem;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EX3_IA_API UEX3_Brain : public UActorComponent
@@ -22,6 +23,7 @@ class EX3_IA_API UEX3_Brain : public UActorComponent
 	UPROPERTY(EditAnywhere) UEX3_FSM* m_FSM = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_DetectionSystem* m_DetectionSystem = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_MovementSystem* m_MovementSystem = nullptr;
+	UPROPERTY(EditAnywhere) UEX3_CACSystem* m_CACSystem = nullptr;
 
 public:
 	DECLARE_EVENT(UEX3_Brain, UpdateBrain)
@@ -45,6 +47,7 @@ public:
 	FORCEINLINE UEX3_FSM* GetFSM() { return m_FSM; };
 	FORCEINLINE UEX3_DetectionSystem* GetDetectionSystem() { return m_DetectionSystem; };
 	FORCEINLINE UEX3_MovementSystem* GetMovementSystem() { return m_MovementSystem; };
+	FORCEINLINE UEX3_CACSystem* GetCACSystem() { return m_CACSystem; };
 
 public:
 	void CreateComponents();

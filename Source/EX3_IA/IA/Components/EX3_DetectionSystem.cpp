@@ -29,6 +29,7 @@ void UEX3_DetectionSystem::BeginPlay()
 {
 	Super::BeginPlay();
 	InitComponent();
+	//onPlayerSpottedDelegate.AddDynamic(this, &UEX3_DetectionSystem::SpotTarget);
 }
 
 
@@ -38,18 +39,13 @@ void UEX3_DetectionSystem::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UEX3_DetectionSystem::InitEvents()
+/*void UEX3_DetectionSystem::InitEvents()
 {
 	onPlayerSpottedDelegate.AddDynamic(this, &UEX3_DetectionSystem::SpotTarget);
 
 	onPlayerSpotted.AddLambda([this]()
 	{
 		m_IsPlayerSpotted = true;
-	});
-
-	onPlayerTracked.AddLambda([this](FVector _pos)
-	{
-		
 	});
 
 	onPlayerLost.AddLambda([this]()
@@ -63,7 +59,7 @@ void UEX3_DetectionSystem::InitEvents()
 	{
 		UpdateVisualDetection();
 	});
-}
+}*/
 
 void UEX3_DetectionSystem::InitComponent()
 {
@@ -73,13 +69,14 @@ void UEX3_DetectionSystem::InitComponent()
 	m_ActorToIgnore = TArray<AActor*>();
 	m_ActorToIgnore.Add(m_Owner);
 	m_OwnerEyesLocation = m_Owner->GetEyesLocation();
-	InitEvents();
+	//InitEvents();
 }
 
 void UEX3_DetectionSystem::UpdateVisualDetection()
 {
 	const bool _seeEnnemy = VisionDetection();
-	if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpottedDelegate.Broadcast(m_PlayerSpotted);
+	//if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpottedDelegate.Broadcast(m_PlayerSpotted);
+	if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpotted.Broadcast();
 	else if (_seeEnnemy && m_IsPlayerSpotted && m_PlayerSpotted) onPlayerTracked.Broadcast(m_PlayerSpotted->GetActorLocation());
 	else if (!_seeEnnemy && m_IsPlayerSpotted) onPlayerLost.Broadcast();
 }
@@ -112,15 +109,21 @@ bool UEX3_DetectionSystem::VisionLineTrace(const float _angle)
 	return true;
 }
 
-void UEX3_DetectionSystem::SpotTarget(ACharacter* _target)
+/*void UEX3_DetectionSystem::SpotTarget(ACharacter* _target)
 {
 	UE_LOG(LogTemp, Warning, TEXT("SPOT"));
 	onPlayerSpotted.Broadcast();
-}
+}*/
 
 void UEX3_DetectionSystem::RegisterTarget(ACharacter* _target)
 {
 	if (m_PlayerSpotted)return;
 	m_PlayerSpotted = _target;
+}
+
+void UEX3_DetectionSystem::ResetTarget()
+{
+	m_PlayerSpotted = nullptr;
+	m_IsPlayerSpotted = false;
 }
 
