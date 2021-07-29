@@ -37,7 +37,7 @@ void UEX3_CACSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 void UEX3_CACSystem::ChooseTypeAttack()
 {
 	const float _randomNumber = UKismetMathLibrary::RandomIntegerInRange(0, 100);
-	if (_randomNumber <= 75)
+	if (_randomNumber <= m_PercentHeavyAttack)
 		m_IsHeavyAttacking = true;
 	else
 		m_IsLightAttacking = true;
@@ -47,5 +47,10 @@ void UEX3_CACSystem::Attack()
 {
 	if (m_IsLightAttacking) onLightAttackCombo.Broadcast();
 	else if (m_IsHeavyAttacking) onHeavyAttackCombo.Broadcast();
+}
+
+void UEX3_CACSystem::ResetCombo()
+{
+	onEndCombo.Broadcast();
 }
 

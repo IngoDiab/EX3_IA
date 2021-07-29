@@ -17,5 +17,5 @@ void UEX3_Wait_To_Chase::ExitTransition() const
 bool UEX3_Wait_To_Chase::CheckCondition() const
 {
 	if (!m_FSM) return false;
-	return !m_FSM->IsAtRange() || !m_FSM->IsWaiting();
+	return !m_FSM->IsAtPos();
 }

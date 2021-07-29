@@ -45,18 +45,23 @@ void UEX3_MovementSystem::InitComponent()
 	m_PosToMove = m_Owner->GetActorLocation();
 }
 
-bool UEX3_MovementSystem::IsAtPos(const FVector _pos)
+bool UEX3_MovementSystem::IsAtPos()
 {
 	if (!m_Owner) return true;
 	const FVector _currentPos = m_Owner->GetActorLocation();
-	const float _dist = FVector::Distance(_currentPos, _pos);
+	const float _dist = FVector::Distance(_currentPos, m_PosToMove);
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), _dist);
-	return FVector::Distance(_currentPos, _pos) < m_MinDist;
+	return FVector::Distance(_currentPos, m_PosToMove) < m_MinDist;
+}
+
+void UEX3_MovementSystem::UpdateIsAtPos()
+{
+	//m_IsAtPos = IsAtPos(m_PosToMove);
 }
 
 void UEX3_MovementSystem::UpdateMovementSystem()
 {
-	if (IsAtPos(m_PosToMove)) onPosReached.Broadcast();
+	if (IsAtPos()) onPosReached.Broadcast();
 	else onMoveToPos.Broadcast(); 
 }
 
@@ -70,7 +75,8 @@ void UEX3_MovementSystem::MoveToPos()
 void UEX3_MovementSystem::RotateToPos()
 {
 	if (!m_Owner)return;
-	const FRotator _lookAtRotation = UKismetMathLibrary::FindLookAtRotation(m_Owner->GetActorLocation(), m_PosToMove);
+	const FVector _posToLook = FVector(m_PosToMove.X, m_PosToMove.Y, m_Owner->GetActorLocation().Z);
+	const FRotator _lookAtRotation = UKismetMathLibrary::FindLookAtRotation(m_Owner->GetActorLocation(), _posToLook);
 	const FRotator _newRotation = UKismetMathLibrary::RInterpTo_Constant(m_Owner->GetActorRotation(), _lookAtRotation, GetWorld()->TimeSeconds, m_SpeedRotate);
 	m_Owner->SetActorRotation(_newRotation);
 }

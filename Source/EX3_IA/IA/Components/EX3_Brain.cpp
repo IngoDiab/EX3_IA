@@ -24,6 +24,7 @@ UEX3_Brain::UEX3_Brain()
 void UEX3_Brain::BeginPlay()
 {
 	Super::BeginPlay();
+	InitOwner();
 	InitAnimation();
 	InitEventsComponents();
 	m_FSM->StartFSM();
@@ -32,7 +33,7 @@ void UEX3_Brain::BeginPlay()
 void UEX3_Brain::PostInitProperties()
 {
 	Super::PostInitProperties();
-	InitOwner();
+	
 }
 
 
@@ -80,11 +81,13 @@ void UEX3_Brain::AttachComponentsToOwner()
 
 void UEX3_Brain::InitEventsComponents()
 {
-	if (!m_DetectionSystem || !m_MovementSystem) return;
+	if (!m_DetectionSystem || !m_MovementSystem || !m_CACSystem || !m_Animations) return;
 
 	onUpdateBrain.AddLambda([this]()
 	{
 		m_DetectionSystem->UpdateVisualDetection();
+		m_FSM->SetIsAtPos(m_MovementSystem->IsAtPos());
+		//m_MovementSystem->UpdateIsAtPos();
 	});
 
 	/// <summary>
@@ -117,14 +120,12 @@ void UEX3_Brain::InitEventsComponents()
 	{
 		m_MovementSystem->GoToPos();
 		m_Animations->SetIsMoving(true);
-		m_FSM->SetIsAtRange(false);
 	});
 
 	m_MovementSystem->OnPosReached()->AddLambda([this]()
 	{
 		m_MovementSystem->Stop();
 		m_Animations->SetIsMoving(false);
-		m_FSM->SetIsAtRange(true);
 	});
 
 
@@ -139,6 +140,16 @@ void UEX3_Brain::InitEventsComponents()
 	m_CACSystem->OnLightAttackCombo()->AddLambda([this]()
 	{
 		m_Animations->SetIsLightAttacking(true);
+	});
+
+	m_CACSystem->OnEndCombo()->AddLambda([this]()
+	{
+		m_CACSystem->SetHeavyAttacking(false);
+		m_CACSystem->SetLightAttacking(false);
+		m_CACSystem->ResetNumberAttackInRow();
+
+		m_Animations->SetIsHeavyAttacking(false);
+		m_Animations->SetIsLightAttacking(false);
 	});
 }
 

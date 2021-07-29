@@ -4,8 +4,16 @@
 #include "EX3_WaitState.h"
 
 #include"EX3_IA/IA/Components/EX3_FSM.h"
+#include"EX3_IA/IA/Components/EX3_Brain.h"
+#include"EX3_IA/IA/Components/EX3_MovementSystem.h"
 
 #include "Kismet/KismetMathLibrary.h"
+
+void UEX3_WaitState::InitState(UEX3_Brain& _brain)
+{
+	Super::InitState(_brain);
+	m_MoveSystem = _brain.GetMovementSystem();
+}
 
 void UEX3_WaitState::EnterState()
 {
@@ -17,6 +25,7 @@ void UEX3_WaitState::EnterState()
 UEX3_Transition* UEX3_WaitState::UpdateState()
 {
 	UpdateTimer();
+	if (m_MoveSystem) m_MoveSystem->RotateToPos();
 	return Super::UpdateState();
 }
 
@@ -28,7 +37,7 @@ void UEX3_WaitState::ExitState()
 void UEX3_WaitState::GetRandomTimeToWait()
 {
 	if (!m_FSM || !m_FSM->GetUseRandomWaitingTime()) return;
-	m_TimeToWait = UKismetMathLibrary::RandomFloatInRange(.1f, 5);
+	m_TimeToWait = UKismetMathLibrary::RandomFloatInRange(m_FSM->GetMinWaitingTime(), m_FSM->GetMaxWaitingTime());
 }
 
 void UEX3_WaitState::UpdateTimer()

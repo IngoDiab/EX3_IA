@@ -15,6 +15,9 @@
 #include "Transitions/EX3_Chase_To_IDLE.h"
 #include "Transitions/EX3_Chase_To_Wait.h"
 #include "Transitions/EX3_Wait_To_Chase.h"
+#include "Transitions/EX3_Wait_To_CAC.h"
+#include "Transitions/EX3_CAC_To_Wait.h"
+#include "Transitions/EX3_CAC_To_Chase.h"
 
 // Sets default values for this component's properties
 UEX3_FSM::UEX3_FSM()
@@ -62,6 +65,9 @@ void UEX3_FSM::InitFSM()
 
 	UEX3_WaitState* _waitState = NewObject<UEX3_WaitState>();
 	m_States.Add(_waitState);
+	
+	UEX3_CACState* _CACState = NewObject<UEX3_CACState>();
+	m_States.Add(_CACState);
 
 	//Create IDLE/Chase Transition
 	UEX3_IDLE_To_Chase* _IDLE_To_Chase = NewObject<UEX3_IDLE_To_Chase>();
@@ -80,6 +86,20 @@ void UEX3_FSM::InitFSM()
 	UEX3_Wait_To_Chase* _Wait_To_Chase = NewObject<UEX3_Wait_To_Chase>();
 	_Wait_To_Chase->InitTransition(*this, *_chaseState);
 	_waitState->AddTransition(*_Wait_To_Chase);
+
+	//Create Wait/CAC Transition
+	UEX3_Wait_To_CAC* _Wait_To_CAC = NewObject<UEX3_Wait_To_CAC>();
+	_Wait_To_CAC->InitTransition(*this, *_CACState);
+	_waitState->AddTransition(*_Wait_To_CAC);
+
+	UEX3_CAC_To_Wait* _CAC_To_Wait = NewObject<UEX3_CAC_To_Wait>();
+	_CAC_To_Wait->InitTransition(*this, *_waitState);
+	_CACState->AddTransition(*_CAC_To_Wait);
+
+	//Create CAC/Chase Transition
+	UEX3_CAC_To_Chase* _CAC_To_Chase = NewObject<UEX3_CAC_To_Chase>();
+	_CAC_To_Chase->InitTransition(*this, *_chaseState);
+	_CACState->AddTransition(*_CAC_To_Chase);
 
 	//Init all state with brain
 	for (UEX3_State* _state : m_States)

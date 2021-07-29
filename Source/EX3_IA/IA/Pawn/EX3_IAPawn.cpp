@@ -105,7 +105,7 @@ void AEX3_IAPawn::RootMotion()
 	_newTransform.GetLocation().Normalize();
 	FVector _testPos = _newTransform.GetLocation().RotateAngleAxis(-90, GetActorUpVector());
 	_test.SetLocation(_testPos);
-	_test.SetScale3D(FVector(1));
+	_test.SetScale3D(GetActorScale3D());
 
 	AddActorLocalTransform(_test, true);
 }

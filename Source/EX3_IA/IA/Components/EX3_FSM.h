@@ -25,11 +25,14 @@ class EX3_IA_API UEX3_FSM : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere) bool m_IsStarted = false;
 
+	UPROPERTY(EditAnywhere) float m_MinWaitingTime = 0;
+	UPROPERTY(EditAnywhere) float m_MaxWaitingTime = 0;
+
 	//TRANSITIONS BOOL
 	UPROPERTY(VisibleAnywhere) bool m_UseRandomWaitingTime = true;
 	UPROPERTY(VisibleAnywhere) float m_WaitingTime = 0;
 	UPROPERTY(VisibleAnywhere) bool m_PlayerSeen = false;
-	UPROPERTY(VisibleAnywhere) bool m_IsAtRange = false;
+	UPROPERTY(VisibleAnywhere) bool m_IsAtPos = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsWaiting = false;
 	//
 
@@ -53,12 +56,14 @@ public:
 
 	FORCEINLINE void SetWaitingTime(const float _waitingTime) { m_WaitingTime = _waitingTime; };
 	FORCEINLINE float GetWaitingTime() const { return m_WaitingTime; };
+	FORCEINLINE float GetMinWaitingTime() const { return m_MinWaitingTime; };
+	FORCEINLINE float GetMaxWaitingTime() const { return m_MaxWaitingTime; };
 
 	FORCEINLINE void SetIsPlayerSeen(const bool _seen) { m_PlayerSeen = _seen; };
 	FORCEINLINE bool IsPlayerSeen() const { return m_PlayerSeen; };
 	
-	FORCEINLINE void SetIsAtRange(const bool _atRange) { m_IsAtRange = _atRange; };
-	FORCEINLINE bool IsAtRange() const { return m_IsAtRange; };
+	FORCEINLINE void SetIsAtPos(const bool _atPos) { m_IsAtPos = _atPos; };
+	FORCEINLINE bool IsAtPos() const { return m_IsAtPos; };
 	
 	FORCEINLINE void SetIsWaiting(const bool _isWaiting) { m_IsWaiting = _isWaiting; };
 	FORCEINLINE bool IsWaiting() const { return m_IsWaiting; };

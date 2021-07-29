@@ -22,6 +22,7 @@ class EX3_IA_API UEX3_MovementSystem : public UActorComponent
 	UPROPERTY(VisibleAnywhere) FVector m_PosToMove = FVector(0);
 	UPROPERTY(VisibleAnywhere) TArray<FVector> m_Path;
 	UPROPERTY(EditAnywhere) bool m_IsInChase = false;
+	//UPROPERTY(EditAnywhere) bool m_IsAtPos = false;
 	UPROPERTY(EditAnywhere) float m_SpeedRotate = 1000;
 	UPROPERTY(EditAnywhere) float m_MinDist = 0;
 	UPROPERTY(EditAnywhere) float m_MaxDistApproach = 100;
@@ -56,7 +57,9 @@ public:
 public:
 	//void InitEvents();
 	void InitComponent();
-	bool IsAtPos(const FVector _pos);
+	bool IsAtPos();
+
+	void UpdateIsAtPos();
 
 	void UpdateMovementSystem();
 
