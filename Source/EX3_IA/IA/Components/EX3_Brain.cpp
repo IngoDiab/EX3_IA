@@ -81,19 +81,26 @@ void UEX3_Brain::AttachComponentsToOwner()
 
 void UEX3_Brain::InitEventsComponents()
 {
-	if (!m_DetectionSystem || !m_MovementSystem || !m_CACSystem || !m_Animations) return;
+	InitBrainEvents();
+	InitDetectionEvents();
+	InitMovementEvents();
+	InitCACEvents();
+	InitAnimationsNotifyEvents();
+}
 
+void UEX3_Brain::InitBrainEvents()
+{
+	if (!m_DetectionSystem || !m_FSM)return;
 	onUpdateBrain.AddLambda([this]()
 	{
 		m_DetectionSystem->UpdateVisualDetection();
 		m_FSM->SetIsAtPos(m_MovementSystem->IsAtPos());
-		//m_MovementSystem->UpdateIsAtPos();
 	});
+}
 
-	/// <summary>
-	/// //////////////////////////////////////////////////////////
-	/// </summary>
-
+void UEX3_Brain::InitDetectionEvents()
+{
+	if (!m_DetectionSystem || !m_FSM || !m_MovementSystem)return;
 	m_DetectionSystem->OnPlayerSpotted()->AddLambda([this]()
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("AAAA"));
@@ -111,11 +118,11 @@ void UEX3_Brain::InitEventsComponents()
 		m_DetectionSystem->ResetTarget();
 		m_FSM->SetIsPlayerSeen(false);
 	});
+}
 
-	/// <summary>
-	/// //////////////////////////////////////////////////////
-	/// </summary>
-
+void UEX3_Brain::InitMovementEvents()
+{
+	if (!m_Animations || !m_MovementSystem)return;
 	m_MovementSystem->OnMoveToPos()->AddLambda([this]()
 	{
 		m_MovementSystem->GoToPos();
@@ -127,29 +134,55 @@ void UEX3_Brain::InitEventsComponents()
 		m_MovementSystem->Stop();
 		m_Animations->SetIsMoving(false);
 	});
+}
 
-
-	/// <summary>
-	/// ////////////////////////////////////////////////////
-	/// </summary>
+void UEX3_Brain::InitCACEvents()
+{
+	if (!m_Animations || !m_CACSystem || !m_FSM)return;
 	m_CACSystem->OnHeavyAttackCombo()->AddLambda([this]()
 	{
+		m_FSM->SetIsAttacking(true);
 		m_Animations->SetIsHeavyAttacking(true);
+		m_Animations->IncreaseCombo();
 	});
 
 	m_CACSystem->OnLightAttackCombo()->AddLambda([this]()
 	{
+		m_FSM->SetIsAttacking(true);
 		m_Animations->SetIsLightAttacking(true);
+		m_Animations->IncreaseCombo();
 	});
 
 	m_CACSystem->OnEndCombo()->AddLambda([this]()
 	{
+		m_FSM->SetIsAttacking(false);
+
 		m_CACSystem->SetHeavyAttacking(false);
 		m_CACSystem->SetLightAttacking(false);
 		m_CACSystem->ResetNumberAttackInRow();
 
 		m_Animations->SetIsHeavyAttacking(false);
 		m_Animations->SetIsLightAttacking(false);
+		m_Animations->ResetCombo();
+	});
+}
+
+void UEX3_Brain::InitAnimationsNotifyEvents()
+{
+	if (!m_Animations || !m_CACSystem || !m_FSM)return;
+	m_Animations->OnEndComboDelegate()->AddDynamic(m_Animations, &UEX3_IAAnimation::EndCombo);
+
+	m_Animations->OnEndCombo()->AddLambda([this]()
+	{
+		m_FSM->SetIsAttacking(false);
+
+		m_CACSystem->SetHeavyAttacking(false);
+		m_CACSystem->SetLightAttacking(false);
+		m_CACSystem->ResetNumberAttackInRow();
+
+		m_Animations->SetIsHeavyAttacking(false);
+		m_Animations->SetIsLightAttacking(false);
+		m_Animations->ResetCombo();
 	});
 }
 

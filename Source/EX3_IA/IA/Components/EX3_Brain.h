@@ -56,4 +56,9 @@ public:
 	void AttachComponentsToOwner();
 
 	void InitEventsComponents();
+	void InitBrainEvents();
+	void InitDetectionEvents();
+	void InitMovementEvents();
+	void InitCACEvents();
+	void InitAnimationsNotifyEvents();
 };

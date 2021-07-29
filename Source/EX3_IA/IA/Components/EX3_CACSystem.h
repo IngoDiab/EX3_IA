@@ -15,7 +15,7 @@ class EX3_IA_API UEX3_CACSystem : public UActorComponent
 	UPROPERTY(VisibleAnywhere) bool m_IsLightAttacking = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsHeavyAttacking = false;
 	UPROPERTY(VisibleAnywhere) float m_NumberAttackInRow = 0;
-	UPROPERTY(EditAnywhere) float m_PercentHeavyAttack = 0;
+	UPROPERTY(EditAnywhere) float m_PercentHeavyAttack = 50;
 
 public:
 	DECLARE_EVENT(UEX3_CACSystem, HeavyAttackCombo)

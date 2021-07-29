@@ -3,3 +3,7 @@
 
 #include "EX3_IAAnimation.h"
 
+void UEX3_IAAnimation::EndCombo()
+{
+    onEndCombo.Broadcast();
+}

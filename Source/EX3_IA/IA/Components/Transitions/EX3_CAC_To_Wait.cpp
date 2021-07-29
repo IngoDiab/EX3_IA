@@ -16,5 +16,5 @@ void UEX3_CAC_To_Wait::ExitTransition() const
 bool UEX3_CAC_To_Wait::CheckCondition() const
 {
 	if (!m_FSM) return false;
-	return false;
+	return !m_FSM->IsAttacking();
 }

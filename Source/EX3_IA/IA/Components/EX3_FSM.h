@@ -34,6 +34,7 @@ class EX3_IA_API UEX3_FSM : public UActorComponent
 	UPROPERTY(VisibleAnywhere) bool m_PlayerSeen = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsAtPos = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsWaiting = false;
+	UPROPERTY(VisibleAnywhere) bool m_IsAttacking = false;
 	//
 
 public:	
@@ -67,6 +68,9 @@ public:
 	
 	FORCEINLINE void SetIsWaiting(const bool _isWaiting) { m_IsWaiting = _isWaiting; };
 	FORCEINLINE bool IsWaiting() const { return m_IsWaiting; };
+	
+	FORCEINLINE void SetIsAttacking(const bool _isAttacking) { m_IsAttacking = _isAttacking; };
+	FORCEINLINE bool IsAttacking() const { return m_IsAttacking; };
 	//
 
 public:
