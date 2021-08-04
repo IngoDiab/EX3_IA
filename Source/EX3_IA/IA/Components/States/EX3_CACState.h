@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -22,4 +20,6 @@ public:
 	void EnterState() override;
 	UEX3_Transition* UpdateState() override;
 	void ExitState() override;
+
+	void Attack();
 };

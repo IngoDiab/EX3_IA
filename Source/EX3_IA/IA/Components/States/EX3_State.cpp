@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EX3_State.h"
 
 #include "EX3_IA/IA/Components/Transitions/EX3_Transition.h"

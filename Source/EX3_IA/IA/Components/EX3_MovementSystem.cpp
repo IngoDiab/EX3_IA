@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EX3_MovementSystem.h"
 #include "EX3_IA/IA/Pawn/EX3_IAPawn.h"
 #include "EX3_Brain.h"
@@ -9,14 +6,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
-// Sets default values for this component's properties
 UEX3_MovementSystem::UEX3_MovementSystem()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 void UEX3_MovementSystem::PostInitProperties()
@@ -24,14 +16,12 @@ void UEX3_MovementSystem::PostInitProperties()
 	Super::PostInitProperties();
 }
 
-// Called when the game starts
 void UEX3_MovementSystem::BeginPlay()
 {
 	Super::BeginPlay();
-	InitComponent();}
+	InitComponent();
+}
 
-
-// Called every frame
 void UEX3_MovementSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -50,13 +40,7 @@ bool UEX3_MovementSystem::IsAtPos()
 	if (!m_Owner) return true;
 	const FVector _currentPos = m_Owner->GetActorLocation();
 	const float _dist = FVector::Distance(_currentPos, m_PosToMove);
-	//UE_LOG(LogTemp, Warning, TEXT("%f"), _dist);
 	return FVector::Distance(_currentPos, m_PosToMove) < m_MinDist;
-}
-
-void UEX3_MovementSystem::UpdateIsAtPos()
-{
-	//m_IsAtPos = IsAtPos(m_PosToMove);
 }
 
 void UEX3_MovementSystem::UpdateMovementSystem()
@@ -69,7 +53,7 @@ void UEX3_MovementSystem::MoveToPos()
 {
 	if (!m_Controller)return;
 	m_Controller->MoveToLocation(m_PosToMove);
-	m_Path = UAIBlueprintHelperLibrary::GetCurrentPathPoints(m_Controller);
+	//m_Path = UAIBlueprintHelperLibrary::GetCurrentPathPoints(m_Controller);
 }
 
 void UEX3_MovementSystem::RotateToPos()
@@ -83,14 +67,12 @@ void UEX3_MovementSystem::RotateToPos()
 
 void UEX3_MovementSystem::GoToPos()
 {
-	m_MinDist = m_MaxDistApproach;
 	MoveToPos();
 	RotateToPos();
 }
 
 void UEX3_MovementSystem::Stop()
 {
-	if (m_IsInChase) m_MinDist = m_MaxDistMoveAway;
 	m_Controller->StopMovement();
 	RotateToPos();
 }

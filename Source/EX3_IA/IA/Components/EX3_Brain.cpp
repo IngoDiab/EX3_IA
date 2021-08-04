@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EX3_Brain.h"
 
 #include "EX3_FSM.h"
@@ -10,17 +7,12 @@
 #include "EX3_IA/IA/Pawn/EX3_IAPawn.h"
 #include "EX3_IA/IA/Animation/EX3_IAAnimation.h"
 
-// Sets default values for this component's properties
 UEX3_Brain::UEX3_Brain()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	CreateComponents();
 }
 
-
-// Called when the game starts
 void UEX3_Brain::BeginPlay()
 {
 	Super::BeginPlay();
@@ -36,8 +28,6 @@ void UEX3_Brain::PostInitProperties()
 	
 }
 
-
-// Called every frame
 void UEX3_Brain::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -143,14 +133,12 @@ void UEX3_Brain::InitCACEvents()
 	{
 		m_FSM->SetIsAttacking(true);
 		m_Animations->SetIsHeavyAttacking(true);
-		m_Animations->IncreaseCombo();
 	});
 
 	m_CACSystem->OnLightAttackCombo()->AddLambda([this]()
 	{
 		m_FSM->SetIsAttacking(true);
 		m_Animations->SetIsLightAttacking(true);
-		m_Animations->IncreaseCombo();
 	});
 
 	m_CACSystem->OnEndCombo()->AddLambda([this]()
@@ -159,11 +147,9 @@ void UEX3_Brain::InitCACEvents()
 
 		m_CACSystem->SetHeavyAttacking(false);
 		m_CACSystem->SetLightAttacking(false);
-		m_CACSystem->ResetNumberAttackInRow();
 
 		m_Animations->SetIsHeavyAttacking(false);
 		m_Animations->SetIsLightAttacking(false);
-		m_Animations->ResetCombo();
 	});
 }
 
@@ -178,11 +164,9 @@ void UEX3_Brain::InitAnimationsNotifyEvents()
 
 		m_CACSystem->SetHeavyAttacking(false);
 		m_CACSystem->SetLightAttacking(false);
-		m_CACSystem->ResetNumberAttackInRow();
 
 		m_Animations->SetIsHeavyAttacking(false);
 		m_Animations->SetIsLightAttacking(false);
-		m_Animations->ResetCombo();
 	});
 }
 

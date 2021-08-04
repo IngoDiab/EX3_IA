@@ -4,6 +4,7 @@
 #include "EX3_ChaseState.h"
 
 #include"EX3_IA/IA/Components/EX3_Brain.h"
+#include"EX3_IA/IA/Components/EX3_FSM.h"
 #include"EX3_IA/IA/Components/EX3_MovementSystem.h"
 
 void UEX3_ChaseState::InitState(UEX3_Brain& _brain)
@@ -14,7 +15,8 @@ void UEX3_ChaseState::InitState(UEX3_Brain& _brain)
 
 void UEX3_ChaseState::EnterState()
 {
-	m_MoveSystem->SetIsInChase(true);
+	if (!m_MoveSystem || !m_FSM)return;
+	m_MoveSystem->SetMinDist(m_FSM->GetMaxDistChase());
 }
 
 UEX3_Transition* UEX3_ChaseState::UpdateState()
@@ -26,7 +28,7 @@ UEX3_Transition* UEX3_ChaseState::UpdateState()
 
 void UEX3_ChaseState::ExitState()
 {
-	m_MoveSystem->SetIsInChase(false);
+
 }
 
 void UEX3_ChaseState::UpdateMove() const

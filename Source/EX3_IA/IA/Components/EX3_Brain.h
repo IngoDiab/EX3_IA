@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -20,6 +18,7 @@ class EX3_IA_API UEX3_Brain : public UActorComponent
 
 	UPROPERTY(EditAnywhere) AEX3_IAPawn* m_Owner = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_IAAnimation* m_Animations = nullptr;
+
 	UPROPERTY(EditAnywhere) UEX3_FSM* m_FSM = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_DetectionSystem* m_DetectionSystem = nullptr;
 	UPROPERTY(EditAnywhere) UEX3_MovementSystem* m_MovementSystem = nullptr;
@@ -30,15 +29,13 @@ public:
 	UpdateBrain onUpdateBrain;
 
 public:	
-	// Sets default values for this component's properties
 	UEX3_Brain();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 	virtual void PostInitProperties() override;
+
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:

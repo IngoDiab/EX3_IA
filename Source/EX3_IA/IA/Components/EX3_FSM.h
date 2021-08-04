@@ -10,6 +10,11 @@ class AEX3_IAPawn;
 class UEX3_Brain;
 
 class UEX3_State;
+class UEX3_IDLEState;
+class UEX3_ChaseState;
+class UEX3_WaitState;
+class UEX3_CACState;
+
 class UEX3_Transition;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -25,12 +30,15 @@ class EX3_IA_API UEX3_FSM : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere) bool m_IsStarted = false;
 
-	UPROPERTY(EditAnywhere) float m_MinWaitingTime = 0;
-	UPROPERTY(EditAnywhere) float m_MaxWaitingTime = 0;
+	UPROPERTY(EditAnywhere) float m_MaxDistChase = 100;
+	UPROPERTY(EditAnywhere) float m_MaxDistCombat = 300;
+
+	UPROPERTY(EditAnywhere) float m_MinWaitingTime = 0.1f;
+	UPROPERTY(EditAnywhere) float m_MaxWaitingTime = 2;
 
 	//TRANSITIONS BOOL
 	UPROPERTY(VisibleAnywhere) bool m_UseRandomWaitingTime = true;
-	UPROPERTY(VisibleAnywhere) float m_WaitingTime = 0;
+
 	UPROPERTY(VisibleAnywhere) bool m_PlayerSeen = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsAtPos = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsWaiting = false;
@@ -38,27 +46,27 @@ class EX3_IA_API UEX3_FSM : public UActorComponent
 	//
 
 public:	
-	// Sets default values for this component's properties
 	UEX3_FSM();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
 	FORCEINLINE void StartFSM() { m_IsStarted = true; };
 
+	FORCEINLINE float GetMaxDistChase() const { return m_MaxDistChase; };
+	FORCEINLINE float GetMaxDistCombat() const { return m_MaxDistCombat; };
+
+	FORCEINLINE float GetMinWaitingTime() const { return m_MinWaitingTime; };
+	FORCEINLINE float GetMaxWaitingTime() const { return m_MaxWaitingTime; };
+
 	//TRANSITIONS BOOL
 	FORCEINLINE bool GetUseRandomWaitingTime() const { return m_UseRandomWaitingTime; };
 
-	FORCEINLINE void SetWaitingTime(const float _waitingTime) { m_WaitingTime = _waitingTime; };
-	FORCEINLINE float GetWaitingTime() const { return m_WaitingTime; };
-	FORCEINLINE float GetMinWaitingTime() const { return m_MinWaitingTime; };
-	FORCEINLINE float GetMaxWaitingTime() const { return m_MaxWaitingTime; };
+
 
 	FORCEINLINE void SetIsPlayerSeen(const bool _seen) { m_PlayerSeen = _seen; };
 	FORCEINLINE bool IsPlayerSeen() const { return m_PlayerSeen; };
@@ -75,7 +83,14 @@ public:
 
 public:
 	void InitComponent();
+
 	void InitFSM();
+	UEX3_State* CreateStates();
+	void InitTransitionsFromIDLEState(UEX3_IDLEState& _idleState, UEX3_ChaseState& _chaseState);
+	void InitTransitionsFromChaseState(UEX3_ChaseState& _chaseState, UEX3_IDLEState& _idleState, UEX3_WaitState& _waitState);
+	void InitTransitionsFromWaitState(UEX3_WaitState& _waitState, UEX3_ChaseState& _chaseState, UEX3_CACState& _CACState);
+	void InitTransitionsFromCACState(UEX3_CACState& _CACState, UEX3_WaitState& _waitState, UEX3_ChaseState& _chaseState);
+
 	void SetStartState(UEX3_State& _state);
 
 	void UpdateFSM();
