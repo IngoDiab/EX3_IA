@@ -19,7 +19,8 @@ void UEX3_CACState::EnterState()
 
 UEX3_Transition* UEX3_CACState::UpdateState()
 {
-	if (!m_MoveSystem) return Super::UpdateState();
+	if (!m_MoveSystem || !m_CACSystem) return Super::UpdateState();
+	m_CACSystem->ApplyDamage();
 	m_MoveSystem->RotateToPos();
 	return Super::UpdateState();
 }

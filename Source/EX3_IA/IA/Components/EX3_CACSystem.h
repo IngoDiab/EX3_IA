@@ -5,6 +5,7 @@
 #include "EX3_CACSystem.generated.h"
 
 class ACharacter;
+class AEX3_IAPawn;
 class UBoxComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -12,12 +13,15 @@ class EX3_IA_API UEX3_CACSystem : public UActorComponent
 {
 	GENERATED_BODY()
 
+	UPROPERTY() AEX3_IAPawn* m_Owner = nullptr;
 	UPROPERTY() UBoxComponent* m_WeaponCollider = nullptr;
+
 	UPROPERTY(VisibleAnywhere) TArray<ACharacter*> m_CharacterTouched = TArray<ACharacter*>();
 	UPROPERTY(VisibleAnywhere) TArray<ACharacter*> m_CharacterToDamage = TArray<ACharacter*>();
 	UPROPERTY(VisibleAnywhere) bool m_IsLightAttacking = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsHeavyAttacking = false;
 	UPROPERTY(EditAnywhere) float m_PercentHeavyAttack = 50;
+	UPROPERTY(EditAnywhere) float m_KnockbackForce = 300;
 
 	UPROPERTY(VisibleAnywhere) bool m_CanDealDamage = false;
 	UPROPERTY(VisibleAnywhere) bool m_WeaponTouchPlayer = false;

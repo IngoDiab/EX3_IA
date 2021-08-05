@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EX3_IAPawn.h"
 
 #include "EX3_IA/IA/Components/EX3_Brain.h"
@@ -12,10 +9,8 @@
 
 #include "Kismet/KismetMathLibrary.h"
 
-// Sets default values
 AEX3_IAPawn::AEX3_IAPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CreateBrain();
 	CreateComponents();
@@ -28,12 +23,10 @@ void AEX3_IAPawn::PostInitProperties()
 
 }
 
-// Called when the game starts or when spawned
 void AEX3_IAPawn::BeginPlay()
 {
 	Super::BeginPlay();}
 
-// Called every frame
 void AEX3_IAPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -41,11 +34,9 @@ void AEX3_IAPawn::Tick(float DeltaTime)
 	RootMotion();
 }
 
-// Called to bind functionality to input
 void AEX3_IAPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AEX3_IAPawn::CreateBrain()

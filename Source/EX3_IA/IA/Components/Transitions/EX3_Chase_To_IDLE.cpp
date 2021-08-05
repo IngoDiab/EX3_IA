@@ -15,5 +15,5 @@ void UEX3_Chase_To_IDLE::ExitTransition() const
 
 bool UEX3_Chase_To_IDLE::CheckCondition() const
 {
-	return !m_FSM->IsPlayerSeen();
+	return !m_FSM->IsPlayerSeen() && m_FSM->IsAtPos();
 }

@@ -20,14 +20,14 @@ void UEX3_CACSystem::BeginPlay()
 void UEX3_CACSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction); 
-	ApplyDamage();
+	//ApplyDamage();
 }
 
 void UEX3_CACSystem::GetWeaponCollider()
 {
-	const AEX3_IAPawn* _owner = Cast<AEX3_IAPawn>(GetOwner());
-	if (!_owner)return;
-	m_WeaponCollider = _owner->GetWeaponCollider();
+	m_Owner = Cast<AEX3_IAPawn>(GetOwner());
+	if (!m_Owner)return;
+	m_WeaponCollider = m_Owner->GetWeaponCollider();
 	if (!m_WeaponCollider)return;
 	m_WeaponCollider->OnComponentBeginOverlap.AddDynamic(this, &UEX3_CACSystem::OnWeaponColliderOverlap);
 	m_WeaponCollider->OnComponentEndOverlap.AddDynamic(this, &UEX3_CACSystem::OnWeaponColliderEndOverlap);
@@ -70,19 +70,19 @@ void UEX3_CACSystem::Attack()
 void UEX3_CACSystem::ActivateDamage(const bool _dealDamage)
 {
 	m_CanDealDamage = _dealDamage;
-	if (!_dealDamage) 
-	{
-		m_CharacterToDamage.Empty();
-		m_CharacterTouched.Empty();
-	}
+	if (_dealDamage) return;
+	m_CharacterToDamage.Empty();
+	m_CharacterTouched.Empty();
 }
 
 void UEX3_CACSystem::ApplyDamage()
 {
-	if (!m_CanDealDamage || m_CharacterToDamage.Num() == 0) return;
+	if (!m_CanDealDamage || !m_Owner || m_CharacterToDamage.Num() == 0) return;
 	for (ACharacter* _character : m_CharacterToDamage) 
 	{
-		const FVector _knockbackForce = _character->GetActorForwardVector() * -100 + _character->GetActorUpVector() * 200;
+		FVector _knockbackForce = _character->GetActorLocation() - m_Owner->GetActorLocation();
+		_knockbackForce.Normalize();
+		_knockbackForce *= m_KnockbackForce;
 		_character->LaunchCharacter(_knockbackForce, true, true);
 	}
 }
