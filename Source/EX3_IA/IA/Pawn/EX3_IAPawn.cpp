@@ -6,6 +6,7 @@
 #include "EX3_IA/IA/Components/EX3_Brain.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
@@ -20,12 +21,17 @@ AEX3_IAPawn::AEX3_IAPawn()
 	CreateComponents();
 }
 
+void AEX3_IAPawn::PostInitProperties()
+{
+	Super::PostInitProperties();
+	m_WeaponCollider->AttachToComponent(m_Mesh, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false), FName("weaponCollider"));
+
+}
+
 // Called when the game starts or when spawned
 void AEX3_IAPawn::BeginPlay()
 {
-	Super::BeginPlay();
-	
-}
+	Super::BeginPlay();}
 
 // Called every frame
 void AEX3_IAPawn::Tick(float DeltaTime)
@@ -78,6 +84,9 @@ void AEX3_IAPawn::CreateComponentsRelativeToMesh()
 	//Create EyesLocation
 	m_EyesLocation = CreateDefaultSubobject<USceneComponent>(TEXT("EyesLocation"));
 	m_EyesLocation->AttachToComponent(m_Mesh, FAttachmentTransformRules::KeepRelativeTransform);
+
+	m_WeaponCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponCollider"));
+	
 }
 
 void AEX3_IAPawn::Gravity()

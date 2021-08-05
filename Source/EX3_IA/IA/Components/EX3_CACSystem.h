@@ -4,15 +4,23 @@
 #include "Components/ActorComponent.h"
 #include "EX3_CACSystem.generated.h"
 
+class ACharacter;
+class UBoxComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EX3_IA_API UEX3_CACSystem : public UActorComponent
 {
 	GENERATED_BODY()
 
+	UPROPERTY() UBoxComponent* m_WeaponCollider = nullptr;
+	UPROPERTY(VisibleAnywhere) TArray<ACharacter*> m_CharacterTouched = TArray<ACharacter*>();
+	UPROPERTY(VisibleAnywhere) TArray<ACharacter*> m_CharacterToDamage = TArray<ACharacter*>();
 	UPROPERTY(VisibleAnywhere) bool m_IsLightAttacking = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsHeavyAttacking = false;
 	UPROPERTY(EditAnywhere) float m_PercentHeavyAttack = 50;
+
+	UPROPERTY(VisibleAnywhere) bool m_CanDealDamage = false;
+	UPROPERTY(VisibleAnywhere) bool m_WeaponTouchPlayer = false;
 
 public:
 	DECLARE_EVENT(UEX3_CACSystem, HeavyAttackCombo)
@@ -43,7 +51,17 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
+	void GetWeaponCollider();
+	UFUNCTION()
+	void OnWeaponColliderOverlap(UPrimitiveComponent* _overlappedComponent, AActor* _otherActor, UPrimitiveComponent* _otherComp, int32 _otherBodyIndex, bool _bFromSweep, const FHitResult& _sweepResult);
+	UFUNCTION()
+	void OnWeaponColliderEndOverlap(UPrimitiveComponent* _overlappedComponent, AActor* _otherActor, UPrimitiveComponent* _otherComp, int32 _otherBodyIndex);
+
 	void ChooseTypeAttack();
 	void Attack();
+
+	void ActivateDamage(const bool _dealDamage);
+	void ApplyDamage();
+
 	void ResetCombo();
 };

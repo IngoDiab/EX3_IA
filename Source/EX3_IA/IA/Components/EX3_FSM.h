@@ -42,7 +42,8 @@ class EX3_IA_API UEX3_FSM : public UActorComponent
 	UPROPERTY(VisibleAnywhere) bool m_PlayerSeen = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsAtPos = false;
 	UPROPERTY(VisibleAnywhere) bool m_IsWaiting = false;
-	UPROPERTY(VisibleAnywhere) bool m_IsAttacking = false;
+	UPROPERTY(VisibleAnywhere) bool m_IsInAttack = false;
+	UPROPERTY(VisibleAnywhere) bool m_HasFinishedAttackState = false;
 	//
 
 public:	
@@ -66,8 +67,6 @@ public:
 	//TRANSITIONS BOOL
 	FORCEINLINE bool GetUseRandomWaitingTime() const { return m_UseRandomWaitingTime; };
 
-
-
 	FORCEINLINE void SetIsPlayerSeen(const bool _seen) { m_PlayerSeen = _seen; };
 	FORCEINLINE bool IsPlayerSeen() const { return m_PlayerSeen; };
 	
@@ -76,9 +75,12 @@ public:
 	
 	FORCEINLINE void SetIsWaiting(const bool _isWaiting) { m_IsWaiting = _isWaiting; };
 	FORCEINLINE bool IsWaiting() const { return m_IsWaiting; };
-	
-	FORCEINLINE void SetIsAttacking(const bool _isAttacking) { m_IsAttacking = _isAttacking; };
-	FORCEINLINE bool IsAttacking() const { return m_IsAttacking; };
+
+	FORCEINLINE void SetIsInAttack(const bool _isInAttack) { m_IsInAttack = _isInAttack; };
+	FORCEINLINE bool IsInAttack() const { return m_IsInAttack; };
+
+	FORCEINLINE void SetHasFinishedAttackState(const bool _isAttacking) { m_HasFinishedAttackState = _isAttacking; };
+	FORCEINLINE bool HasFinishedAttackState() const { return m_HasFinishedAttackState; };
 	//
 
 public:

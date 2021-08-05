@@ -17,5 +17,5 @@ void UEX3_CAC_To_Chase::ExitTransition() const
 bool UEX3_CAC_To_Chase::CheckCondition() const
 {
 	if (!m_FSM) return false;
-	return !m_FSM->IsAtPos();
+	return !m_FSM->IsAtPos() && !m_FSM->IsInAttack();
 }

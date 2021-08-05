@@ -63,7 +63,7 @@ bool UEX3_DetectionSystem::VisionLineTrace(const float _angle)
 	const FVector _start = m_OwnerEyesLocation->GetComponentLocation();
 	const FVector _rotatedForward = m_OwnerEyesLocation->GetForwardVector().RotateAngleAxis(_angle, m_OwnerEyesLocation->GetUpVector());
 	const FVector _end = _start + _rotatedForward * m_DistanceVision;
-	const bool _hasHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), _start, _end, ETraceTypeQuery::TraceTypeQuery3, true, m_ActorToIgnore, EDrawDebugTrace::ForOneFrame, _hit, true);
+	const bool _hasHit = UKismetSystemLibrary::LineTraceSingle(GetWorld(), _start, _end, ETraceTypeQuery::TraceTypeQuery3, true, m_ActorToIgnore, m_DebugVisionCone? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None, _hit, true);
 	if (!_hasHit) return false;
 	ACharacter* _target = Cast<ACharacter>(_hit.Actor);
 	if (!_target) return false;

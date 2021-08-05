@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,6 +7,7 @@
 class UEX3_Brain;
 
 class UCapsuleComponent;
+class UBoxComponent;
 class UArrowComponent;
 class UFloatingPawnMovement;
 
@@ -21,6 +20,7 @@ class EX3_IA_API AEX3_IAPawn : public APawn
 	UPROPERTY(EditAnywhere) USceneComponent* m_EyesLocation = nullptr;
 
 	UPROPERTY(EditAnywhere) UCapsuleComponent* m_CapsuleComponent = nullptr;
+	UPROPERTY(EditAnywhere) UBoxComponent* m_WeaponCollider = nullptr;
 	UPROPERTY(EditAnywhere) UArrowComponent* m_ArrowComponent = nullptr;
 	UPROPERTY(EditAnywhere) USkeletalMeshComponent* m_Mesh = nullptr;
 	UPROPERTY(EditAnywhere) UFloatingPawnMovement* m_PawnMovement = nullptr;
@@ -29,24 +29,23 @@ class EX3_IA_API AEX3_IAPawn : public APawn
 	UPROPERTY(EditAnywhere) bool needRotateRM = true;
 
 public:
-	// Sets default values for this pawn's properties
 	AEX3_IAPawn();
 
+	void PostInitProperties() override;
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
 	FORCEINLINE UEX3_Brain* GetBrain() const { return m_Brain; };
 	FORCEINLINE USkeletalMeshComponent* GetSkeletalMesh() const { return m_Mesh; };
 	FORCEINLINE USceneComponent* GetEyesLocation() const { return m_EyesLocation; };
+	FORCEINLINE UBoxComponent* GetWeaponCollider() const { return m_WeaponCollider; };
 
 public:
 	void CreateBrain();

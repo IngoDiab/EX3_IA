@@ -131,42 +131,52 @@ void UEX3_Brain::InitCACEvents()
 	if (!m_Animations || !m_CACSystem || !m_FSM)return;
 	m_CACSystem->OnHeavyAttackCombo()->AddLambda([this]()
 	{
-		m_FSM->SetIsAttacking(true);
+		m_FSM->SetHasFinishedAttackState(false);
 		m_Animations->SetIsHeavyAttacking(true);
 	});
 
 	m_CACSystem->OnLightAttackCombo()->AddLambda([this]()
 	{
-		m_FSM->SetIsAttacking(true);
+		m_FSM->SetHasFinishedAttackState(false);
 		m_Animations->SetIsLightAttacking(true);
 	});
 
 	m_CACSystem->OnEndCombo()->AddLambda([this]()
 	{
-		m_FSM->SetIsAttacking(false);
-
-		m_CACSystem->SetHeavyAttacking(false);
-		m_CACSystem->SetLightAttacking(false);
-
-		m_Animations->SetIsHeavyAttacking(false);
-		m_Animations->SetIsLightAttacking(false);
+		EndCombo();
 	});
 }
 
 void UEX3_Brain::InitAnimationsNotifyEvents()
 {
-	if (!m_Animations || !m_CACSystem || !m_FSM)return;
-	m_Animations->OnEndComboDelegate()->AddDynamic(m_Animations, &UEX3_IAAnimation::EndCombo);
+	if (!m_Animations || !m_CACSystem)return;
+	m_Animations->OnActivateDamage()->AddDynamic(this, &UEX3_Brain::ActivateDamage);
+	m_Animations->OnLockAI()->AddDynamic(this, &UEX3_Brain::LockAI);
+	m_Animations->OnEndComboDelegate()->AddDynamic(this, &UEX3_Brain::EndCombo);
+}
 
-	m_Animations->OnEndCombo()->AddLambda([this]()
-	{
-		m_FSM->SetIsAttacking(false);
+void UEX3_Brain::ActivateDamage(const bool _dealDamage)
+{
+	if (!m_CACSystem) return;
+	m_CACSystem->ActivateDamage(_dealDamage);
+}
 
-		m_CACSystem->SetHeavyAttacking(false);
-		m_CACSystem->SetLightAttacking(false);
+void UEX3_Brain::LockAI(const bool _lockAI)
+{
+	if (!m_FSM || !m_MovementSystem) return;
+	m_FSM->SetIsInAttack(_lockAI);
+	m_MovementSystem->SetCanRotate(!_lockAI);
+}
 
-		m_Animations->SetIsHeavyAttacking(false);
-		m_Animations->SetIsLightAttacking(false);
-	});
+void UEX3_Brain::EndCombo() 
+{
+	if (!m_FSM || !m_CACSystem || !m_Animations) return;
+	m_FSM->SetHasFinishedAttackState(true);
+
+	m_CACSystem->SetHeavyAttacking(false);
+	m_CACSystem->SetLightAttacking(false);
+
+	m_Animations->SetIsHeavyAttacking(false);
+	m_Animations->SetIsLightAttacking(false);
 }
 

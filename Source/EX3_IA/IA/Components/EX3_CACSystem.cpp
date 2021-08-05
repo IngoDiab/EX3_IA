@@ -1,5 +1,9 @@
 #include "EX3_CACSystem.h"
 
+#include "EX3_IA/IA/Pawn/EX3_IAPawn.h"
+
+#include "Components/BoxComponent.h" 	
+#include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
 
 UEX3_CACSystem::UEX3_CACSystem()
@@ -10,12 +14,42 @@ UEX3_CACSystem::UEX3_CACSystem()
 void UEX3_CACSystem::BeginPlay()
 {
 	Super::BeginPlay();
-
+	GetWeaponCollider();
 }
 
 void UEX3_CACSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction); 
+	ApplyDamage();
+}
+
+void UEX3_CACSystem::GetWeaponCollider()
+{
+	const AEX3_IAPawn* _owner = Cast<AEX3_IAPawn>(GetOwner());
+	if (!_owner)return;
+	m_WeaponCollider = _owner->GetWeaponCollider();
+	if (!m_WeaponCollider)return;
+	m_WeaponCollider->OnComponentBeginOverlap.AddDynamic(this, &UEX3_CACSystem::OnWeaponColliderOverlap);
+	m_WeaponCollider->OnComponentEndOverlap.AddDynamic(this, &UEX3_CACSystem::OnWeaponColliderEndOverlap);
+}
+
+void UEX3_CACSystem::OnWeaponColliderOverlap(UPrimitiveComponent* _overlappedComponent, AActor* _otherActor, UPrimitiveComponent* _otherComp, int32 _otherBodyIndex, bool _bFromSweep, const FHitResult& _sweepResult)
+{
+	ACharacter* _character = Cast<ACharacter>(_otherActor);
+	if (!_character)return;
+	m_CharacterToDamage.Add(_character);
+	/*if (!m_CanDealDamage) return;
+	ACharacter* _character = Cast<ACharacter>(_otherActor);
+	if (!_character)return;
+	const FVector _knockbackForce = _character->GetActorForwardVector() * -100 + _character->GetActorUpVector() * 200;
+	_character->LaunchCharacter(_knockbackForce, true, true);*/
+}
+
+void UEX3_CACSystem::OnWeaponColliderEndOverlap(UPrimitiveComponent* _overlappedComponent, AActor* _otherActor, UPrimitiveComponent* _otherComp, int32 _otherBodyIndex)
+{
+	ACharacter* _character = Cast<ACharacter>(_otherActor);
+	if (!_character)return;
+	m_CharacterToDamage.Remove(_character);
 }
 
 void UEX3_CACSystem::ChooseTypeAttack()
@@ -31,6 +65,26 @@ void UEX3_CACSystem::Attack()
 {
 	if (m_IsLightAttacking) onLightAttackCombo.Broadcast();
 	else if (m_IsHeavyAttacking) onHeavyAttackCombo.Broadcast();
+}
+
+void UEX3_CACSystem::ActivateDamage(const bool _dealDamage)
+{
+	m_CanDealDamage = _dealDamage;
+	if (!_dealDamage) 
+	{
+		m_CharacterToDamage.Empty();
+		m_CharacterTouched.Empty();
+	}
+}
+
+void UEX3_CACSystem::ApplyDamage()
+{
+	if (!m_CanDealDamage || m_CharacterToDamage.Num() == 0) return;
+	for (ACharacter* _character : m_CharacterToDamage) 
+	{
+		const FVector _knockbackForce = _character->GetActorForwardVector() * -100 + _character->GetActorUpVector() * 200;
+		_character->LaunchCharacter(_knockbackForce, true, true);
+	}
 }
 
 void UEX3_CACSystem::ResetCombo()

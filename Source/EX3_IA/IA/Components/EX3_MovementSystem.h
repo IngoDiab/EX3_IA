@@ -18,6 +18,8 @@ class EX3_IA_API UEX3_MovementSystem : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere) FVector m_PosToMove = FVector(0);
 	UPROPERTY(VisibleAnywhere) TArray<FVector> m_Path;
+	UPROPERTY(EditAnywhere) bool m_CanMove = true;
+	UPROPERTY(EditAnywhere) bool m_CanRotate = true;
 	UPROPERTY(EditAnywhere) float m_SpeedRotate = 1000;
 	UPROPERTY(EditAnywhere) float m_MinDist = 100;
 
@@ -42,6 +44,8 @@ public:
 	FORCEINLINE MovingToPos* OnMoveToPos() { return &onMoveToPos; };
 	FORCEINLINE PosReached* OnPosReached() { return &onPosReached; };
 	FORCEINLINE void SetPosToMove(const FVector _pos) { m_PosToMove = _pos; };
+	FORCEINLINE void SetCanMove(const bool _canMove) { m_CanMove = _canMove; };
+	FORCEINLINE void SetCanRotate(const bool _canRotate) { m_CanRotate = _canRotate; };
 	FORCEINLINE void SetMinDist(const float _minDist) { m_MinDist = _minDist; };
 
 public:

@@ -17,6 +17,7 @@ class EX3_IA_API UEX3_DetectionSystem : public UActorComponent
 	UPROPERTY() USceneComponent* m_OwnerEyesLocation = nullptr;
 
 	UPROPERTY(VisibleAnywhere) TArray<AActor*> m_ActorToIgnore;
+	UPROPERTY(EditAnywhere) bool m_DebugVisionCone = false;
 	UPROPERTY(EditAnywhere) float m_DistanceVision = 1000;
 	UPROPERTY(EditAnywhere) float m_AngleVision = 90;
 	UPROPERTY(EditAnywhere) float m_ModuloVision = 0;

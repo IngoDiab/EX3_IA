@@ -58,4 +58,11 @@ public:
 	void InitMovementEvents();
 	void InitCACEvents();
 	void InitAnimationsNotifyEvents();
+
+	UFUNCTION()
+	void ActivateDamage(const bool _dealDamage);
+	UFUNCTION()
+	void LockAI(const bool _lockAI);
+	UFUNCTION()
+	void EndCombo();
 };

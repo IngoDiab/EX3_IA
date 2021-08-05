@@ -1,14 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "EX3_IAAnimation.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class EX3_IA_API UEX3_IAAnimation : public UAnimInstance
 {
@@ -25,15 +20,27 @@ public:
 	FORCEINLINE void SetIsHeavyAttacking(const bool _isHeavyAttacking) { m_IsHeavyAttacking = _isHeavyAttacking; };
 
 public:
+	#pragma region ActivateDamage
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivateDamage, bool, _activateDamage);
+	UPROPERTY(BlueprintCallable)
+		FActivateDamage onActivateDamage;
+
+	FORCEINLINE FActivateDamage* OnActivateDamage() { return &onActivateDamage; };
+	#pragma endregion
+
+	#pragma region LockAI
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockAI, bool, _lockAI);
+	UPROPERTY(BlueprintCallable)
+		FLockAI onLockAI;
+
+	FORCEINLINE FLockAI* OnLockAI() { return &onLockAI; };
+	#pragma endregion
+
+	#pragma region EndCombo
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEndComboDelegate);
 	UPROPERTY(BlueprintCallable)
 		FEndComboDelegate onEndComboDelegate;
 
-	DECLARE_EVENT(UEX3_IAAnimation, EndCombo);
-	EndCombo onEndCombo;
-
 	FORCEINLINE FEndComboDelegate* OnEndComboDelegate() { return &onEndComboDelegate; };
-	FORCEINLINE EndCombo* OnEndCombo() { return &onEndCombo; };
-	UFUNCTION() void EndCombo();
-	
+	#pragma endregion
 };

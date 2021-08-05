@@ -51,17 +51,17 @@ void UEX3_MovementSystem::UpdateMovementSystem()
 
 void UEX3_MovementSystem::MoveToPos()
 {
-	if (!m_Controller)return;
+	if (!m_CanMove || !m_Controller)return;
 	m_Controller->MoveToLocation(m_PosToMove);
 	//m_Path = UAIBlueprintHelperLibrary::GetCurrentPathPoints(m_Controller);
 }
 
 void UEX3_MovementSystem::RotateToPos()
 {
-	if (!m_Owner)return;
+	if (!m_CanRotate || !m_Owner)return;
 	const FVector _posToLook = FVector(m_PosToMove.X, m_PosToMove.Y, m_Owner->GetActorLocation().Z);
 	const FRotator _lookAtRotation = UKismetMathLibrary::FindLookAtRotation(m_Owner->GetActorLocation(), _posToLook);
-	const FRotator _newRotation = UKismetMathLibrary::RInterpTo_Constant(m_Owner->GetActorRotation(), _lookAtRotation, GetWorld()->TimeSeconds, m_SpeedRotate);
+	const FRotator _newRotation = UKismetMathLibrary::RInterpTo_Constant(m_Owner->GetActorRotation(), _lookAtRotation, GetWorld()->DeltaTimeSeconds, m_SpeedRotate);
 	m_Owner->SetActorRotation(_newRotation);
 }
 
