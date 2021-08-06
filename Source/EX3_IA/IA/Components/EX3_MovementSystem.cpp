@@ -6,6 +6,10 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
+
+
+#include "DrawDebugHelpers.h"
+
 UEX3_MovementSystem::UEX3_MovementSystem()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -35,17 +39,22 @@ void UEX3_MovementSystem::InitComponent()
 	m_PosToMove = m_Owner->GetActorLocation();
 }
 
-bool UEX3_MovementSystem::IsAtPos()
+bool UEX3_MovementSystem::IsAtPosTarget()
+{
+	return IsAtPos(m_PosToMove, m_MinDist);
+}
+
+bool UEX3_MovementSystem::IsAtPos(const FVector _pos, const float _minDist)
 {
 	if (!m_Owner) return true;
 	const FVector _currentPos = m_Owner->GetActorLocation();
-	const float _dist = FVector::Distance(_currentPos, m_PosToMove);
-	return FVector::Distance(_currentPos, m_PosToMove) < m_MinDist;
+	const float _dist = FVector::Distance(_currentPos, _pos);
+	return _dist < _minDist;
 }
 
 void UEX3_MovementSystem::UpdateMovementSystem()
 {
-	if (IsAtPos()) onPosReached.Broadcast();
+	if (IsAtPosTarget()) onPosReached.Broadcast();
 	else onMoveToPos.Broadcast(); 
 }
 
@@ -53,13 +62,16 @@ void UEX3_MovementSystem::MoveToPos()
 {
 	if (!m_CanMove || !m_Controller)return;
 	m_Controller->MoveToLocation(m_PosToMove);
-	//m_Path = UAIBlueprintHelperLibrary::GetCurrentPathPoints(m_Controller);
+	m_NextPathPoint = UAIBlueprintHelperLibrary::GetCurrentPathPoints(m_Controller)[1] + FVector::UpVector * m_Owner->GetScaledCapsuleHalfHeight();
+	DrawDebugSphere(GetWorld(), m_NextPathPoint, 20, 100, FColor::Blue);
+	DrawDebugSphere(GetWorld(), m_NextPathPoint, 10, 100, FColor::Red);
 }
 
 void UEX3_MovementSystem::RotateToPos()
 {
 	if (!m_CanRotate || !m_Owner)return;
-	const FVector _posToLook = FVector(m_PosToMove.X, m_PosToMove.Y, m_Owner->GetActorLocation().Z);
+	const FVector _posToLook = m_IsLookingAtPlayer ? FVector(m_PosToMove.X, m_PosToMove.Y, m_Owner->GetActorLocation().Z) : m_NextPathPoint;
+	if (!m_IsLookingAtPlayer && IsAtPos(m_NextPathPoint, m_MinDistForPathPoint)) return;
 	const FRotator _lookAtRotation = UKismetMathLibrary::FindLookAtRotation(m_Owner->GetActorLocation(), _posToLook);
 	const FRotator _newRotation = UKismetMathLibrary::RInterpTo_Constant(m_Owner->GetActorRotation(), _lookAtRotation, GetWorld()->DeltaTimeSeconds, m_SpeedRotate);
 	m_Owner->SetActorRotation(_newRotation);

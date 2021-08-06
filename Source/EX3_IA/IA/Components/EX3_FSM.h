@@ -33,6 +33,9 @@ class EX3_IA_API UEX3_FSM : public UActorComponent
 	UPROPERTY(EditAnywhere) float m_MaxDistChase = 100;
 	UPROPERTY(EditAnywhere) float m_MaxDistCombat = 300;
 
+	UPROPERTY(EditAnywhere) float m_RotateSpeed = 1000;
+	UPROPERTY(EditAnywhere) float m_RotateSpeedCAC = 150;
+
 	UPROPERTY(EditAnywhere) float m_MinWaitingTime = 0.1f;
 	UPROPERTY(EditAnywhere) float m_MaxWaitingTime = 2;
 
@@ -60,6 +63,9 @@ public:
 
 	FORCEINLINE float GetMaxDistChase() const { return m_MaxDistChase; };
 	FORCEINLINE float GetMaxDistCombat() const { return m_MaxDistCombat; };
+
+	FORCEINLINE float GetRotateSpeed() const { return m_RotateSpeed; };
+	FORCEINLINE float GetRotateSpeedCAC() const { return m_RotateSpeedCAC; };
 
 	FORCEINLINE float GetMinWaitingTime() const { return m_MinWaitingTime; };
 	FORCEINLINE float GetMaxWaitingTime() const { return m_MaxWaitingTime; };

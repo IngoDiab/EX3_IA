@@ -84,7 +84,7 @@ void UEX3_Brain::InitBrainEvents()
 	onUpdateBrain.AddLambda([this]()
 	{
 		m_DetectionSystem->UpdateVisualDetection();
-		m_FSM->SetIsAtPos(m_MovementSystem->IsAtPos());
+		m_FSM->SetIsAtPos(m_MovementSystem->IsAtPosTarget());
 	});
 }
 

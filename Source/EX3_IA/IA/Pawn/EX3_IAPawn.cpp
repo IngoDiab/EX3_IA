@@ -110,3 +110,8 @@ void AEX3_IAPawn::RootMotion()
 	AddActorLocalTransform(_test, true);
 }
 
+float AEX3_IAPawn::GetScaledCapsuleHalfHeight() const
+{
+	return m_CapsuleComponent ? m_CapsuleComponent->GetScaledCapsuleHalfHeight() : 0;
+}
+

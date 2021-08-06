@@ -14,6 +14,7 @@ void UEX3_CACState::InitState(UEX3_Brain& _brain)
 
 void UEX3_CACState::EnterState()
 {
+	m_MoveSystem->SetSpeedRotate(m_FSM->GetRotateSpeedCAC());
 	Attack();
 }
 
@@ -27,7 +28,8 @@ UEX3_Transition* UEX3_CACState::UpdateState()
 
 void UEX3_CACState::ExitState()
 {
-	if (!m_CACSystem)return;
+	if (!m_CACSystem || !m_MoveSystem || !m_FSM)return;
+	m_MoveSystem->SetSpeedRotate(m_FSM->GetRotateSpeed());
 	m_CACSystem->ResetCombo();
 }
 

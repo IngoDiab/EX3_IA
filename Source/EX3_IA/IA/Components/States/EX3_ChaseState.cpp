@@ -17,6 +17,7 @@ void UEX3_ChaseState::EnterState()
 {
 	if (!m_MoveSystem || !m_FSM)return;
 	m_MoveSystem->SetMinDist(m_FSM->GetMaxDistChase());
+	m_MoveSystem->SetIsLookingAtPlayer(false);
 }
 
 UEX3_Transition* UEX3_ChaseState::UpdateState()
@@ -28,7 +29,8 @@ UEX3_Transition* UEX3_ChaseState::UpdateState()
 
 void UEX3_ChaseState::ExitState()
 {
-
+	if (!m_MoveSystem)return;
+	m_MoveSystem->SetIsLookingAtPlayer(true);
 }
 
 void UEX3_ChaseState::UpdateMove() const

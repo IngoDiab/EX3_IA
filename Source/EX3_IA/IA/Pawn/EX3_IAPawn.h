@@ -56,4 +56,5 @@ public:
 	void Gravity();
 
 	void RootMotion();
+	float GetScaledCapsuleHalfHeight() const;
 };
