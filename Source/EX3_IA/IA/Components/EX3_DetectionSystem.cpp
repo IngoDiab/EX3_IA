@@ -41,9 +41,10 @@ void UEX3_DetectionSystem::InitComponent()
 void UEX3_DetectionSystem::UpdateVisualDetection()
 {
 	const bool _seeEnnemy = VisionDetection();
+	const bool _ennemyTooFar = GetDistanceFromEnnemy() >= m_DistanceEnnemy;
 	if (_seeEnnemy && !m_IsPlayerSpotted) onPlayerSpotted.Broadcast();
-	else if (_seeEnnemy && m_IsPlayerSpotted && m_PlayerSpotted) onPlayerTracked.Broadcast(m_PlayerSpotted->GetActorLocation());
-	else if (!_seeEnnemy && m_IsPlayerSpotted) onPlayerLost.Broadcast();
+	else if (((_seeEnnemy && m_IsPlayerSpotted) || !_ennemyTooFar) && m_PlayerSpotted) onPlayerTracked.Broadcast(m_PlayerSpotted->GetActorLocation());
+	else if (!_seeEnnemy && m_IsPlayerSpotted && _ennemyTooFar) onPlayerLost.Broadcast();
 }
 
 bool UEX3_DetectionSystem::VisionDetection()
@@ -83,3 +84,8 @@ void UEX3_DetectionSystem::ResetTarget()
 	m_IsPlayerSpotted = false;
 }
 
+float UEX3_DetectionSystem::GetDistanceFromEnnemy()
+{
+	if (!m_Owner || !m_PlayerSpotted) return m_DistanceEnnemy;
+	return FVector::Distance(m_Owner->GetActorLocation(), m_PlayerSpotted->GetActorLocation());
+}

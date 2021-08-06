@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "EX3_Chase_To_IDLE.h"
 
 #include"EX3_IA/IA/Components/EX3_FSM.h"
